@@ -1,5 +1,7 @@
 .gradle
 /build/
+/frontend-android/build/
+/backend/build
 
 # Ignore Gradle GUI config
 gradle-app.setting
