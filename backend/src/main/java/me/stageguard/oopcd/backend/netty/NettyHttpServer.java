@@ -9,17 +9,28 @@ import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.codec.http.HttpObjectAggregator;
 import io.netty.handler.codec.http.HttpRequestDecoder;
 import io.netty.handler.codec.http.HttpResponseEncoder;
+import me.stageguard.oopcd.backend.netty.handler.TestHandler;
+import me.stageguard.oopcd.backend.netty.handler.TestPostHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 
 public class NettyHttpServer {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(NettyHttpServer.class);
 
     private final int port;
+    private final HttpRequestHandler httpRequestHandler = new HttpRequestHandler();
 
     public NettyHttpServer(int port) {
         this.port = port;
+        httpRequestHandler.setHandlers(new ArrayList<IRouteHandler>(Arrays.asList(
+                new TestHandler(),
+                new TestPostHandler()
+        )));
     }
 
     public void start() throws Exception {
@@ -35,7 +46,7 @@ public class NettyHttpServer {
                             .addLast("decoder", new HttpRequestDecoder())
                             .addLast("encoder", new HttpResponseEncoder())
                             .addLast("aggregator", new HttpObjectAggregator(512 * 1024))
-                            .addLast("handler", new HttpRequestHandler());
+                            .addLast("handler", httpRequestHandler);
                     }
                 })
                 .option(ChannelOption.SO_BACKLOG, 128)
