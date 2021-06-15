@@ -9,48 +9,78 @@ import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.codec.http.HttpObjectAggregator;
 import io.netty.handler.codec.http.HttpRequestDecoder;
 import io.netty.handler.codec.http.HttpResponseEncoder;
-import me.stageguard.oopcd.backend.netty.handler.TestHandler;
-import me.stageguard.oopcd.backend.netty.handler.TestPostHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
 
-public class NettyHttpServer {
+public class NettyHttpServer implements Runnable {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(NettyHttpServer.class);
 
     private final int port;
-    private final HttpRequestHandler httpRequestHandler = new HttpRequestHandler();
+    private final HttpRequestHandler httpRequestHandler;
 
-    public NettyHttpServer(int port) {
-        this.port = port;
-        httpRequestHandler.setHandlers(new ArrayList<>(Arrays.asList(
-                new TestHandler(),
-                new TestPostHandler()
-        )));
+    private final ServerBootstrap bootstrap;
+
+    private NettyHttpServer(NettyHttpServerBuilder builder) {
+        this.port = builder.port;
+        bootstrap = new ServerBootstrap();
+        httpRequestHandler = new HttpRequestHandler();
+        httpRequestHandler.setHandlers(builder.handlers);
+        bootstrap
+            .group(new NioEventLoopGroup())
+            .channel(NioServerSocketChannel.class)
+            .childHandler(new ChannelInitializer<SocketChannel>() {
+                @Override
+                public void initChannel(SocketChannel ch) {
+                    ch.pipeline()
+                        .addLast("decoder", new HttpRequestDecoder())
+                        .addLast("encoder", new HttpResponseEncoder())
+                        .addLast("aggregator", new HttpObjectAggregator(512 * 1024))
+                        .addLast("handler", httpRequestHandler);
+                    LOGGER.info("Channel initialized: " + ch);
+                }
+            })
+            .option(ChannelOption.SO_BACKLOG, 128)
+            .childOption(ChannelOption.SO_KEEPALIVE, Boolean.TRUE);
+        LOGGER.info("Bootstrap initialized: " + bootstrap);
     }
 
-    public void start() throws Exception {
-        ServerBootstrap b = new ServerBootstrap();
-        NioEventLoopGroup group = new NioEventLoopGroup();
-        b.group(group)
-                .channel(NioServerSocketChannel.class)
-                .childHandler(new ChannelInitializer<SocketChannel>() {
-                    @Override
-                    public void initChannel(SocketChannel ch) {
-                        LOGGER.info("initChannel ch:" + ch);
-                        ch.pipeline()
-                            .addLast("decoder", new HttpRequestDecoder())
-                            .addLast("encoder", new HttpResponseEncoder())
-                            .addLast("aggregator", new HttpObjectAggregator(512 * 1024))
-                            .addLast("handler", httpRequestHandler);
-                    }
-                })
-                .option(ChannelOption.SO_BACKLOG, 128)
-                .childOption(ChannelOption.SO_KEEPALIVE, Boolean.TRUE);
-        b.bind(port).sync();
+    @Override
+    public void run() {
+        try {
+            LOGGER.info("Starting Netty HTTP Server...");
+            bootstrap.bind(port).sync();
+        } catch (InterruptedException e) {
+            LOGGER.error(e.toString());
+        }
+    }
+
+    public static class NettyHttpServerBuilder {
+        private int port;
+        private ArrayList<IRouteHandler> handlers = null;
+
+        private NettyHttpServerBuilder(int port) {
+            this.port = port;
+        }
+
+        public static NettyHttpServerBuilder create(int port) {
+            return new NettyHttpServerBuilder(port);
+        }
+
+        public NettyHttpServerBuilder port(int port) {
+            this.port = port;
+            return this;
+        }
+
+        public NettyHttpServerBuilder route(ArrayList<IRouteHandler> handlers) {
+            this.handlers = handlers;
+            return this;
+        }
+
+        public NettyHttpServer build() {
+            return new NettyHttpServer(this);
+        }
     }
 }
