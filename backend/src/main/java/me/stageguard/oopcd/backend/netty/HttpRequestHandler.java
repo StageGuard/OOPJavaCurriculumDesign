@@ -30,7 +30,7 @@ public class HttpRequestHandler extends SimpleChannelInboundHandler<FullHttpRequ
             if(route != null) {
                 var method = route.method();
                 var path = route.path();
-                if(msg.method().toString().equals(method) && msg.uri().equals(path)) {
+                if((msg.method().toString().equals(method) || method.equals(RouteType.COMPOUND)) && msg.uri().equals(path)) {
                     try {
                         var handled = h.handle(msg);
                         response = new DefaultFullHttpResponse(HttpVersion.HTTP_1_1,

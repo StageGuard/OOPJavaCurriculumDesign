@@ -27,7 +27,7 @@ public class NettyHttpServer {
 
     public NettyHttpServer(int port) {
         this.port = port;
-        httpRequestHandler.setHandlers(new ArrayList<IRouteHandler>(Arrays.asList(
+        httpRequestHandler.setHandlers(new ArrayList<>(Arrays.asList(
                 new TestHandler(),
                 new TestPostHandler()
         )));

@@ -10,6 +10,6 @@ import java.lang.annotation.Target;
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Route {
-    String method() default "GET";
+    String method() default RouteType.GET;
     String path() default "/";
 }
