@@ -1,4 +1,4 @@
-package me.stageguard.oopcd.backend.netty;
+package me.stageguard.oopcd.backend.netty.handler;
 
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandler;
@@ -6,6 +6,9 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.codec.http.*;
 import io.netty.util.AsciiString;
+import me.stageguard.oopcd.backend.netty.IRouteHandler;
+import me.stageguard.oopcd.backend.netty.Route;
+import me.stageguard.oopcd.backend.netty.RouteType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.util.ArrayList;
@@ -14,7 +17,6 @@ import java.util.ArrayList;
 public class HttpRequestHandler extends SimpleChannelInboundHandler<FullHttpRequest> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(HttpRequestHandler.class);
-    private final AsciiString contentType = HttpHeaderValues.TEXT_PLAIN;
 
     private ArrayList<? extends IRouteHandler> mHandlers = new ArrayList<>();
 
@@ -62,7 +64,7 @@ public class HttpRequestHandler extends SimpleChannelInboundHandler<FullHttpRequ
             );
         }
         HttpHeaders heads = response.headers();
-        heads.add(HttpHeaderNames.CONTENT_TYPE, contentType + "; charset=UTF-8");
+        heads.add(HttpHeaderNames.CONTENT_TYPE, HttpHeaderValues.APPLICATION_JSON + "; charset=UTF-8");
         heads.add(HttpHeaderNames.CONTENT_LENGTH, response.content().readableBytes());
         heads.add(HttpHeaderNames.CONNECTION, HttpHeaderValues.KEEP_ALIVE);
         ctx.write(response);
@@ -76,7 +78,7 @@ public class HttpRequestHandler extends SimpleChannelInboundHandler<FullHttpRequ
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
-        LOGGER.info("exceptionCaught");
+        LOGGER.info("exceptionCaught in HttpRequestHandler");
         if(null != cause) cause.printStackTrace();
         if(null != ctx) ctx.close();
     }

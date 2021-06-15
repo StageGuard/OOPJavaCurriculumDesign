@@ -9,6 +9,8 @@ import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.codec.http.HttpObjectAggregator;
 import io.netty.handler.codec.http.HttpRequestDecoder;
 import io.netty.handler.codec.http.HttpResponseEncoder;
+import me.stageguard.oopcd.backend.netty.handler.HttpAuthorizeHandler;
+import me.stageguard.oopcd.backend.netty.handler.HttpRequestHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,6 +22,7 @@ public class NettyHttpServer implements Runnable {
 
     private final int port;
     private final HttpRequestHandler httpRequestHandler;
+    private final HttpAuthorizeHandler httpAuthorizeHandler;
 
     private final ServerBootstrap bootstrap;
 
@@ -28,6 +31,7 @@ public class NettyHttpServer implements Runnable {
         bootstrap = new ServerBootstrap();
         httpRequestHandler = new HttpRequestHandler();
         httpRequestHandler.setHandlers(builder.handlers);
+        httpAuthorizeHandler = new HttpAuthorizeHandler(builder.authKey);
         bootstrap
             .group(new NioEventLoopGroup())
             .channel(NioServerSocketChannel.class)
@@ -38,7 +42,8 @@ public class NettyHttpServer implements Runnable {
                         .addLast("decoder", new HttpRequestDecoder())
                         .addLast("encoder", new HttpResponseEncoder())
                         .addLast("aggregator", new HttpObjectAggregator(512 * 1024))
-                        .addLast("handler", httpRequestHandler);
+                        .addLast("authHandler", httpAuthorizeHandler)
+                        .addLast("routeHandler", httpRequestHandler);
                     LOGGER.info("Channel initialized: " + ch);
                 }
             })
@@ -59,6 +64,7 @@ public class NettyHttpServer implements Runnable {
 
     public static class NettyHttpServerBuilder {
         private int port;
+        private String authKey;
         private ArrayList<IRouteHandler> handlers = null;
 
         private NettyHttpServerBuilder(int port) {
@@ -76,6 +82,11 @@ public class NettyHttpServer implements Runnable {
 
         public NettyHttpServerBuilder route(ArrayList<IRouteHandler> handlers) {
             this.handlers = handlers;
+            return this;
+        }
+
+        public NettyHttpServerBuilder authKey(String authKey) {
+            this.authKey = authKey;
             return this;
         }
 

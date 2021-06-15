@@ -1,4 +1,4 @@
-package me.stageguard.oopcd.backend.netty.handler;
+package me.stageguard.oopcd.backend.netty.route;
 
 import io.netty.handler.codec.http.FullHttpRequest;
 import io.netty.handler.codec.http.HttpResponseStatus;
@@ -14,7 +14,7 @@ import me.stageguard.oopcd.backend.netty.dto.response.SqlQueryResultDTO;
 import java.nio.charset.StandardCharsets;
 
 @Route(path = "/test/executeSQLStatement", method = RouteType.POST)
-public class TestExecuteQueryHandler implements IRouteHandler {
+public class TestExecuteQueryRoute implements IRouteHandler {
     @Override
     public ResponseContentWrapper handle(FullHttpRequest request) {
         var content = request.content().toString(StandardCharsets.UTF_8);
