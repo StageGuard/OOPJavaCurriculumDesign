@@ -26,6 +26,8 @@
    - 使用基于 `Kotlin` 语言的 `compose-jb` 作为 UI 框架。
    - 使用 `ktor` 作为 HTTP Client 框架。
 
+[![](https://mermaid.ink/img/eyJjb2RlIjoiZ3JhcGggTFJcbiAgICBiYWNrZW5kKEJhY2tlbmQpXG4gICAgZnJvbnRlbmRhbmRyb2lkKFwiRnJvbnRlbmQ6IEFuZHJvaWRcIilcbiAgICBmcm9udGVuZHdlYihcIkZyb250ZW5kOiBXZWJcIilcbiAgICBkYXRhYmFzZShcIkRhdGFiYXNlXCIpXG4gICAgZGF0YWJhc2UgLS0tIHxhY2Nlc3N8YmFja2VuZFxuICAgIGJhY2tlbmQgLS0-IHxIVFRQIEFQSXxmcm9udGVuZHdlYlxuICAgIGJhY2tlbmQgLS0-IHxIVFRQIEFQSXxmcm9udGVuZGFuZHJvaWQiLCJtZXJtYWlkIjp7InRoZW1lIjoiZGVmYXVsdCJ9LCJ1cGRhdGVFZGl0b3IiOmZhbHNlLCJhdXRvU3luYyI6dHJ1ZSwidXBkYXRlRGlhZ3JhbSI6ZmFsc2V9)](https://mermaid-js.github.io/mermaid-live-editor/edit##eyJjb2RlIjoiZ3JhcGggTFJcbiAgICBiYWNrZW5kKEJhY2tlbmQpXG4gICAgZnJvbnRlbmRhbmRyb2lkKFwiRnJvbnRlbmQ6IEFuZHJvaWRcIilcbiAgICBmcm9udGVuZHdlYihcIkZyb250ZW5kOiBXZWJcIilcbiAgICBkYXRhYmFzZShcIkRhdGFiYXNlXCIpXG4gICAgZGF0YWJhc2UgLS0-IHxhY2Nlc3N8YmFja2VuZFxuICAgIGJhY2tlbmQgLS0-IHxIVFRQIEFQSXxmcm9udGVuZHdlYlxuICAgIGJhY2tlbmQgLS0-IHxIVFRQIEFQSXxmcm9udGVuZGFuZHJvaWQiLCJtZXJtYWlkIjoie1xuICBcInRoZW1lXCI6IFwiZGVmYXVsdFwiXG59IiwidXBkYXRlRWRpdG9yIjpmYWxzZSwiYXV0b1N5bmMiOnRydWUsInVwZGF0ZURpYWdyYW0iOmZhbHNlfQ)
+
 #### 项目特性：
 
 - 前后端分离，便于管理。前后端通信采用 `HTTP API` 并尽量遵守 `Restful API` 设计原则。
@@ -37,3 +39,4 @@
 
 1. [初始化项目，配置 `gradle` 子项目](article/01-init-project-and-configure-gradle.md)
 
+2. [Backend: 构建 Netty HTTP API 服务，封装。](article/02-build-netty-http-api.md)
