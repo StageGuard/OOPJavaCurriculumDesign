@@ -28,5 +28,6 @@ allprojects {
         google()
         jcenter()
         mavenCentral()
+        maven { url 'https://maven.aliyun.com/nexus/content/groups/public/' }
     }
 }
