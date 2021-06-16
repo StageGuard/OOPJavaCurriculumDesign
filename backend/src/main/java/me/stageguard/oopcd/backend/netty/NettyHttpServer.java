@@ -29,9 +29,11 @@ public class NettyHttpServer implements Runnable {
     private NettyHttpServer(NettyHttpServerBuilder builder) {
         this.port = builder.port;
         bootstrap = new ServerBootstrap();
+
+        httpAuthorizeHandler = new HttpAuthorizeHandler(builder.authKey);
         httpRequestHandler = new HttpRequestHandler();
         httpRequestHandler.setHandlers(builder.handlers);
-        httpAuthorizeHandler = new HttpAuthorizeHandler(builder.authKey);
+
         bootstrap
             .group(new NioEventLoopGroup())
             .channel(NioServerSocketChannel.class)

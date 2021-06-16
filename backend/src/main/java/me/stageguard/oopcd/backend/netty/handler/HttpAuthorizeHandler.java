@@ -5,6 +5,7 @@ import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.codec.http.*;
+import io.netty.util.ReferenceCountUtil;
 import me.stageguard.oopcd.backend.netty.dto.response.ErrorResponseDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,6 +37,7 @@ public class HttpAuthorizeHandler extends SimpleChannelInboundHandler<FullHttpRe
         } else {
             LOGGER.warn("AuthKey is not set, server may suffer from illegal call.");
         }
+        ReferenceCountUtil.retain(msg);
         ctx.fireChannelRead(msg);
         ctx.flush();
     }
@@ -48,7 +50,7 @@ public class HttpAuthorizeHandler extends SimpleChannelInboundHandler<FullHttpRe
         HttpHeaders heads = response.headers();
         heads.add(HttpHeaderNames.CONTENT_TYPE, HttpHeaderValues.APPLICATION_JSON + "; charset=UTF-8");
         heads.add(HttpHeaderNames.CONTENT_LENGTH, response.content().readableBytes());
-        heads.add(HttpHeaderNames.CONNECTION, HttpHeaderValues.KEEP_ALIVE);
+        heads.add(HttpHeaderNames.CONNECTION, HttpHeaderValues.CLOSE);
         return response;
     }
 
