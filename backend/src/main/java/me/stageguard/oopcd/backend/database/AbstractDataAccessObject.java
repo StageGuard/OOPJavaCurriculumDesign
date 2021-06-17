@@ -57,12 +57,60 @@ public abstract class AbstractDataAccessObject<T extends IDataAccessObjectData> 
         }
     }
 
+    public int insert(T item) throws SQLException {
+        return insert(new ArrayList<>(Collections.singletonList(item)));
+    }
+
+    public int insert(List<T> itemList) throws SQLException {
+        if(itemList.isEmpty()) {
+            throw new SQLException("Nothing to insert because list is empty.");
+        }
+        var statement = new StringBuilder();
+        statement.append("INSERT INTO `").append(tableName).append("` ");
+        statement.append("(");
+        var ks = itemList.get(0).deserialize().keySet();
+        AtomicInteger index = new AtomicInteger();
+        ks.forEach((k) -> {
+            statement.append("`").append(k).append("`");
+            if(index.get() != ks.size() - 1) statement.append(", ");
+            index.getAndIncrement();
+        });
+        index.set(0);
+        AtomicInteger innerIndex = new AtomicInteger(0);
+        statement.append(") VALUES ");
+        for (var item : itemList) {
+            var vs = item.deserialize().values();
+            statement.append("(");
+            vs.forEach((obj) -> {
+                if(obj instanceof String) {
+                    statement.append("`").append(obj).append("`");
+                } else {
+                    statement.append(obj);
+                }
+                if(innerIndex.get() != vs.size() - 1) statement.append(", ");
+                innerIndex.incrementAndGet();
+            });
+            statement.append(")");
+            if(index.get() != itemList.size() - 1) statement.append(", ");
+            index.incrementAndGet();
+            innerIndex.set(0);
+        }
+        index.set(0);
+        statement.append(";");
+        LOGGER.info(statement.toString());
+        try {
+            return execute(statement.toString());
+        } catch (Exception ex) {
+            throw new SQLException("SQL execution error in create: " + ex);
+        }
+    }
+
     public int update(T data) throws SQLException {
         var initial = data.getInitialValue();
         if(initial == null) {
             throw new SQLException("Cannot update this item because initialValue is null, maybe instance is not created internally.");
         }
-        var kvMapping = data.kv();
+        var kvMapping = data.deserialize();
         var statement = new StringBuilder();
         statement.append("UPDATE `").append(tableName).append("` ");
         statement.append("SET ");
@@ -84,14 +132,10 @@ public abstract class AbstractDataAccessObject<T extends IDataAccessObjectData> 
                     .getField(Objects.requireNonNull(getFieldViaPropertyName(k)))
                     .getAnnotation(FieldProperty.class).type().toLowerCase();
             } catch (NoSuchFieldException ignored) { }
-            if(type.contains("int") ||
-                    type.contains("decimal") ||
-                    type.contains("double") ||
-                    type.contains("float") || type.contains("bit")
-            ) {
-                statement.append("`").append(v).append("` ");
-            } else {
+            if(isFieldANumber(type)) {
                 statement.append(v);
+            } else {
+                statement.append("`").append(v).append("` ");
             }
             if(index.get() != initial.size() - 1) statement.append("AND");
             statement.append(" ");
@@ -123,7 +167,12 @@ public abstract class AbstractDataAccessObject<T extends IDataAccessObjectData> 
         statement.append(limit);
         statement.append(";");
         LOGGER.info(statement.toString());
-        var result = query(statement.toString());
+        Optional<ResultSet> result;
+        try {
+            result = query(statement.toString());
+        } catch (Exception ex) {
+            throw new SQLException("SQL execution error in create: " + ex);
+        }
         if(result.isEmpty()) {
             return new ArrayList<>();
         } else {
@@ -153,7 +202,11 @@ public abstract class AbstractDataAccessObject<T extends IDataAccessObjectData> 
         statement.append(limit);
         statement.append(";");
         LOGGER.info(statement.toString());
-        return execute(statement.toString());
+        try {
+            return execute(statement.toString());
+        } catch (Exception ex) {
+            throw new SQLException("SQL execution error in create: " + ex);
+        }
     }
 
     private String getFieldViaPropertyName(String name) {
@@ -163,6 +216,13 @@ public abstract class AbstractDataAccessObject<T extends IDataAccessObjectData> 
             }
         }
         return null;
+    }
+
+    private boolean isFieldANumber(String type) {
+        return type.contains("int") ||
+                type.contains("decimal") ||
+                type.contains("double") ||
+                type.contains("float") || type.contains("bit");
     }
 
     private int execute(String statement) {
@@ -184,6 +244,6 @@ public abstract class AbstractDataAccessObject<T extends IDataAccessObjectData> 
         public Map<String, Object> getInitialValue() {
             return initialValue;
         }
-        protected abstract Map<String, Object> kv();
+        protected abstract Map<String, Object> deserialize();
     }
 }
