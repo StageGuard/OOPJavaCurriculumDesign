@@ -1,7 +1,5 @@
 package me.stageguard.oopcd.backend.database;
 
-import me.stageguard.oopcd.backend.database.AbstractDataAccessObject.IDataAccessObjectData;
-
 @SuppressWarnings("unused")
 public class ConditionFilter {
     private final StringBuilder statement;

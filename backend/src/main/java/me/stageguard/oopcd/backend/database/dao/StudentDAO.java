@@ -57,7 +57,7 @@ public class StudentDAO extends AbstractDataAccessObject<StudentDAO.StudentData>
         }
 
         @Override
-        protected Map<String, Object> kv() {
+        protected Map<String, Object> deserialize() {
             return Map.of("name", name, "id", id, "class", clazz);
         }
     }

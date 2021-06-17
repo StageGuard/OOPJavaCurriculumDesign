@@ -22,19 +22,13 @@ public class TestExecuteQueryRoute implements IRouteHandler {
         if(dto.expression.trim().toLowerCase().startsWith("select")) {
             var execute = Database.queryBlocking(dto.expression);
             if(execute.isEmpty()) {
-                return new ResponseContentWrapper(HttpResponseStatus.NO_CONTENT, "");
+                return new ResponseContentWrapper(HttpResponseStatus.NO_CONTENT, new SqlExecuteResultDTO(-1));
             } else  {
                 var result = execute.get();
-                return new ResponseContentWrapper(
-                    HttpResponseStatus.OK,
-                    (new SqlQueryResultDTO(result)).serialize()
-                );
+                return new ResponseContentWrapper(HttpResponseStatus.OK, new SqlQueryResultDTO(result));
             }
         }
         var execute = Database.executeBlocking(dto.expression);
-        return new ResponseContentWrapper(
-            HttpResponseStatus.OK,
-            (new SqlExecuteResultDTO(execute)).serialize()
-        );
+        return new ResponseContentWrapper(HttpResponseStatus.OK, new SqlExecuteResultDTO(execute));
     }
 }
