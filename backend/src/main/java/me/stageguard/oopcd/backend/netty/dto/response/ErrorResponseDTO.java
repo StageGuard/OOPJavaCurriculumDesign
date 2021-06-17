@@ -5,16 +5,18 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 import me.stageguard.oopcd.backend.netty.dto.GlobalGson;
+import me.stageguard.oopcd.backend.netty.dto.IResponseDTO;
 
 import java.lang.reflect.Type;
 
-public class ErrorResponseDTO {
+public class ErrorResponseDTO implements IResponseDTO {
     public String error;
 
     public ErrorResponseDTO(String result) {
         this.error = result;
     }
 
+    @Override
     public String serialize() {
         return GlobalGson.INSTANCE.toJson(this);
     }
