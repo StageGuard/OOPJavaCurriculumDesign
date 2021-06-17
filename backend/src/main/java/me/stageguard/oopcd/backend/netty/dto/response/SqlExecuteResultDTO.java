@@ -6,9 +6,9 @@ import me.stageguard.oopcd.backend.netty.dto.GlobalGson;
 import java.lang.reflect.Type;
 
 public class SqlExecuteResultDTO {
-    public boolean result;
+    public int result;
 
-    public SqlExecuteResultDTO(boolean result) {
+    public SqlExecuteResultDTO(int result) {
         this.result = result;
     }
 

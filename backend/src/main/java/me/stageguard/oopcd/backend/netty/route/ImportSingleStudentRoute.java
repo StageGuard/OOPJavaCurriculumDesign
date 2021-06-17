@@ -6,14 +6,16 @@ import me.stageguard.oopcd.backend.netty.IRouteHandler;
 import me.stageguard.oopcd.backend.netty.ResponseContentWrapper;
 import me.stageguard.oopcd.backend.netty.Route;
 import me.stageguard.oopcd.backend.netty.RouteType;
+import me.stageguard.oopcd.backend.netty.dto.request.ImportSingleStudentDTO;
 
-@Route(path = "/test/pg", method = RouteType.COMPOUND)
-public class TestPostGetRoute implements IRouteHandler {
+import java.nio.charset.StandardCharsets;
+
+@Route(path = "v1/importSingleStudent", method = RouteType.POST)
+public class ImportSingleStudentRoute implements IRouteHandler {
     @Override
     public ResponseContentWrapper handle(FullHttpRequest request) {
-        return new ResponseContentWrapper(
-                HttpResponseStatus.OK,
-                "Test" + (request.method().toString().equals(RouteType.POST) ? "Post" : "GET")
-        );
+        var content = request.content().toString(StandardCharsets.UTF_8);
+        var studentInfo = ImportSingleStudentDTO.deserialize(content);
+        return new ResponseContentWrapper(HttpResponseStatus.OK, "");
     }
 }
