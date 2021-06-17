@@ -53,19 +53,19 @@ public class Database implements Runnable {
         }
     }
 
-    public static boolean executeBlocking(String statement) {
+    public static int executeBlocking(String statement) {
         LOGGER.info("Execute: " + statement);
         if(INSTANCE == null) {
             LOGGER.error("Database hasn't been initialized, query operation will not execute.");
-            return false;
+            return 0;
         }
         try {
             var connection = INSTANCE.getConnection();
             var connectionStatement = connection.createStatement();
-            return connectionStatement.execute(statement);
+            return connectionStatement.executeUpdate(statement);
         } catch (SQLException ex) {
             LOGGER.error("Error occurred while querying: " + ex);
-            return false;
+            return 0;
         }
     }
 
