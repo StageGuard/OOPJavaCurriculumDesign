@@ -16,6 +16,7 @@ public @interface FieldProperty {
     String defaultV() default "";
     int order() default FieldOrder.DEFAULT;
     String after() default "";
+    boolean prime() default false;
 
     class FieldOrder {
         public final static int DEFAULT = 0;

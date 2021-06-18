@@ -25,6 +25,7 @@ public abstract class AbstractDataAccessObject<T extends IDataAccessObjectData> 
         statement.append("CREATE TABLE IF NOT EXISTS ")
             .append("`").append(tableName).append("`").append(" ")
             .append("(");
+        String primaryKey = null;
         for(var i = 0; i < dataFields.length; i ++) {
             var property = dataFields[i].getAnnotation(FieldProperty.class);
             if(property != null) {
@@ -41,13 +42,21 @@ public abstract class AbstractDataAccessObject<T extends IDataAccessObjectData> 
                 }
                 if(property.order() != FieldProperty.FieldOrder.DEFAULT) {
                     if(property.after().equals("")) {
-                        throw new IllegalArgumentException("Order is null since order() is not FieldOrder.DEFAULT");
+                        throw new IllegalArgumentException("Order of " + tableName + " is null since order() is not FieldOrder.DEFAULT");
                     }
                     statement.append(property.order() == FieldProperty.FieldOrder.FIRST ? "FIRST" : ("AFTER " + property.after()));
                 }
                 if(i != dataFields.length - 1) statement.append(", ");
-
+                if(property.prime()) {
+                    if(primaryKey != null) {
+                        throw new IllegalArgumentException("Primary of " + tableName + "key has already exists.");
+                    }
+                    primaryKey = property.name();
+                }
             }
+        }
+        if(primaryKey != null) {
+            statement.append(", PRIMARY KEY(`").append(primaryKey).append("`)");
         }
         statement.append(") COLLATE=`utf8_general_ci`;");
         try {

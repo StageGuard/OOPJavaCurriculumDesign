@@ -31,7 +31,7 @@ public class StudentDAO extends AbstractDataAccessObject<StudentDAO.StudentData>
     public static class StudentData extends IDataAccessObjectData {
         @FieldProperty(name = "name", type = "varchar(10)")
         public String name;
-        @FieldProperty(name = "id", type = "bigint")
+        @FieldProperty(name = "id", type = "bigint", prime = true)
         public long id;
         @FieldProperty(name = "class", type = "varchar(50)")
         public String clazz;
