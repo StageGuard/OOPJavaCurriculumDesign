@@ -21,18 +21,19 @@ import me.stageguard.oopcd.backend.netty.dto.response.SqlExecuteResultDTO;
 import me.stageguard.oopcd.backend.netty.dto.response.SqlQueryResultDTO;
 
 import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
 
 @Route(path = "/test/executeSQLStatement", method = RouteType.POST)
 public class TestExecuteQueryRoute implements IRouteHandler {
     @Override
-    public ResponseContentWrapper handle(FullHttpRequest request) {
+    public ResponseContentWrapper handle(FullHttpRequest request, HashMap<String, String> queryOpinions) {
         var content = request.content().toString(StandardCharsets.UTF_8);
         var dto = SqlStatementDTO.deserialize(content);
-        if(dto.expression.trim().toLowerCase().startsWith("select")) {
+        if (dto.expression.trim().toLowerCase().startsWith("select")) {
             var execute = Database.queryBlocking(dto.expression);
-            if(execute.isEmpty()) {
+            if (execute.isEmpty()) {
                 return new ResponseContentWrapper(HttpResponseStatus.NO_CONTENT, new SqlExecuteResultDTO(-1));
-            } else  {
+            } else {
                 var result = execute.get();
                 return new ResponseContentWrapper(HttpResponseStatus.OK, new SqlQueryResultDTO(result));
             }

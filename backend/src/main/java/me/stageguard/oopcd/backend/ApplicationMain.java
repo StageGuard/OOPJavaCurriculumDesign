@@ -11,7 +11,7 @@ package me.stageguard.oopcd.backend;
 
 import me.stageguard.oopcd.backend.database.Database.DatabaseBuilder;
 import me.stageguard.oopcd.backend.netty.NettyHttpServer.NettyHttpServerBuilder;
-import me.stageguard.oopcd.backend.netty.route.ImportSingleStudentRoute;
+import me.stageguard.oopcd.backend.netty.route.StudentCURDRoute;
 import me.stageguard.oopcd.backend.netty.route.TestExecuteQueryRoute;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,7 +31,7 @@ public class ApplicationMain {
         var nettyHttpService = NettyHttpServerBuilder.create(8081)
                 .route(new ArrayList<>(Arrays.asList(
                         new TestExecuteQueryRoute(),
-                        new ImportSingleStudentRoute()
+                        new StudentCURDRoute()
                 )))
                 .authKey("114514")
                 .build();

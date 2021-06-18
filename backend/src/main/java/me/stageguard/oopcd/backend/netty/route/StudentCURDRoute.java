@@ -23,11 +23,12 @@ import me.stageguard.oopcd.backend.netty.dto.response.SqlExecuteResultDTO;
 
 import java.nio.charset.StandardCharsets;
 import java.sql.SQLException;
+import java.util.HashMap;
 
-@Route(path = "/v1/importSingleStudent", method = RouteType.POST)
-public class ImportSingleStudentRoute implements IRouteHandler {
+@Route(path = "/v1/importSingleStudent", method = RouteType.COMPOUND)
+public class StudentCURDRoute implements IRouteHandler {
     @Override
-    public ResponseContentWrapper handle(FullHttpRequest request) {
+    public ResponseContentWrapper handle(FullHttpRequest request, HashMap<String, String> queryOpinions) {
         var content = request.content().toString(StandardCharsets.UTF_8);
         var stuImport = ImportSingleStudentDTO.deserialize(content);
         try {

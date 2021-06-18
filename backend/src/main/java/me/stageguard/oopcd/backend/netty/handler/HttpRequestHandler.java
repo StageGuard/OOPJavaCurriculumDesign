@@ -20,7 +20,11 @@ import me.stageguard.oopcd.backend.netty.RouteType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 @ChannelHandler.Sharable
 public class HttpRequestHandler extends SimpleChannelInboundHandler<FullHttpRequest> {
@@ -41,9 +45,16 @@ public class HttpRequestHandler extends SimpleChannelInboundHandler<FullHttpRequ
             if(route != null) {
                 var method = route.method();
                 var path = route.path();
-                if((msg.method().toString().equals(method) || method.equals(RouteType.COMPOUND)) && msg.uri().equals(path)) {
+                var reqPath = msg.uri();
+                HashMap<String, String> queryOpinions = null;
+                if (reqPath.contains("?")) {
+                    var split = msg.uri().split("\\?");
+                    reqPath = URLDecoder.decode(split[0], StandardCharsets.UTF_8);
+                    queryOpinions = decodeQueryOpinions(split[1]);
+                }
+                if ((msg.method().toString().equals(method) || method.equals(RouteType.COMPOUND)) && reqPath.equals(path)) {
                     try {
-                        var handled = h.handle(msg);
+                        var handled = h.handle(msg, queryOpinions);
                         response = new DefaultFullHttpResponse(HttpVersion.HTTP_1_1,
                                 handled.getStatus(),
                                 Unpooled.wrappedBuffer(handled.getContent().getBytes()));
@@ -77,6 +88,27 @@ public class HttpRequestHandler extends SimpleChannelInboundHandler<FullHttpRequ
         heads.add(HttpHeaderNames.CONTENT_LENGTH, response.content().readableBytes());
         heads.add(HttpHeaderNames.CONNECTION, HttpHeaderValues.KEEP_ALIVE);
         ctx.write(response);
+    }
+
+    private HashMap<String, String> decodeQueryOpinions(String raw) {
+        if (!raw.contains("&")) {
+            var single = raw.split("=");
+            return new HashMap<>(Map.of(
+                    URLDecoder.decode(single[0], StandardCharsets.UTF_8),
+                    URLDecoder.decode(single[1], StandardCharsets.UTF_8)
+            ));
+        } else {
+            var multi = raw.split("&");
+            HashMap<String, String> opinions = new HashMap<>();
+            for (var element : multi) {
+                var single = element.split("=");
+                opinions.put(
+                        URLDecoder.decode(single[0], StandardCharsets.UTF_8),
+                        URLDecoder.decode(single[1], StandardCharsets.UTF_8)
+                );
+            }
+            return opinions;
+        }
     }
 
     @Override
