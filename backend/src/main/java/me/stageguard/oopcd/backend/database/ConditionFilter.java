@@ -1,9 +1,19 @@
+/*
+ *  RollCallSystem Copyright (C) 2021 StageGuard
+ *
+ *  此源代码的使用受 GNU GENERAL PUBLIC LICENSE version 3 许可证的约束, 可以在以下链接找到该许可证.
+ *  Use of this source code is governed by the GNU GPLv3 license that can be found through the following link.
+ *
+ *  https://github.com/StageGuard/OOPJavaCurriculumDesign/blob/main/LICENSE
+ */
+
 package me.stageguard.oopcd.backend.database;
 
 @SuppressWarnings("unused")
 public class ConditionFilter {
     private final StringBuilder statement;
     private boolean isHeadCalled = false;
+
     public ConditionFilter() {
         statement = new StringBuilder();
     }
@@ -67,26 +77,34 @@ public class ConditionFilter {
         public static Condition eq(String l, Object r) {
             return new Condition(l, r, "=");
         }
+
         public static Condition less(String l, Object r) {
             return new Condition(l, r, "<");
         }
+
         public static Condition lessEq(String l, Object r) {
             return new Condition(l, r, "<=");
         }
+
         public static Condition greater(String l, Object r) {
             return new Condition(l, r, ">");
         }
+
         public static Condition greaterEq(String l, Object r) {
             return new Condition(l, r, ">=");
         }
+
         public static Condition notEq(String l, Object r) {
             return new Condition(l, r, "<>");
         }
+
         public static Condition isNull(String l) {
             return new Condition(l, NullWrapper.INSTANCE, " IS ");
         }
+
         private static class NullWrapper {
             public static NullWrapper INSTANCE = new NullWrapper();
+
             @Override
             public String toString() {
                 return "NULL";

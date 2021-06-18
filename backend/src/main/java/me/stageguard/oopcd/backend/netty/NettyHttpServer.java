@@ -1,3 +1,12 @@
+/*
+ *  RollCallSystem Copyright (C) 2021 StageGuard
+ *
+ *  此源代码的使用受 GNU GENERAL PUBLIC LICENSE version 3 许可证的约束, 可以在以下链接找到该许可证.
+ *  Use of this source code is governed by the GNU GPLv3 license that can be found through the following link.
+ *
+ *  https://github.com/StageGuard/OOPJavaCurriculumDesign/blob/main/LICENSE
+ */
+
 package me.stageguard.oopcd.backend.netty;
 
 import io.netty.bootstrap.ServerBootstrap;
@@ -35,22 +44,22 @@ public class NettyHttpServer implements Runnable {
         httpRequestHandler.setHandlers(builder.handlers);
 
         bootstrap
-            .group(new NioEventLoopGroup())
-            .channel(NioServerSocketChannel.class)
-            .childHandler(new ChannelInitializer<SocketChannel>() {
-                @Override
-                public void initChannel(SocketChannel ch) {
-                    ch.pipeline()
-                        .addLast("decoder", new HttpRequestDecoder())
-                        .addLast("encoder", new HttpResponseEncoder())
-                        .addLast("aggregator", new HttpObjectAggregator(512 * 1024))
-                        .addLast("authHandler", httpAuthorizeHandler)
-                        .addLast("routeHandler", httpRequestHandler);
-                    LOGGER.info("Channel initialized: " + ch);
-                }
-            })
-            .option(ChannelOption.SO_BACKLOG, 128)
-            .childOption(ChannelOption.SO_KEEPALIVE, Boolean.TRUE);
+                .group(new NioEventLoopGroup())
+                .channel(NioServerSocketChannel.class)
+                .childHandler(new ChannelInitializer<SocketChannel>() {
+                    @Override
+                    public void initChannel(SocketChannel ch) {
+                        ch.pipeline()
+                                .addLast("decoder", new HttpRequestDecoder())
+                                .addLast("encoder", new HttpResponseEncoder())
+                                .addLast("aggregator", new HttpObjectAggregator(512 * 1024))
+                                .addLast("authHandler", httpAuthorizeHandler)
+                                .addLast("routeHandler", httpRequestHandler);
+                        LOGGER.info("Channel initialized: " + ch);
+                    }
+                })
+                .option(ChannelOption.SO_BACKLOG, 128)
+                .childOption(ChannelOption.SO_KEEPALIVE, Boolean.TRUE);
         LOGGER.info("Bootstrap initialized: " + bootstrap);
     }
 

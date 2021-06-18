@@ -1,13 +1,22 @@
+/*
+ *  RollCallSystem Copyright (C) 2021 StageGuard
+ *
+ *  此源代码的使用受 GNU GENERAL PUBLIC LICENSE version 3 许可证的约束, 可以在以下链接找到该许可证.
+ *  Use of this source code is governed by the GNU GPLv3 license that can be found through the following link.
+ *
+ *  https://github.com/StageGuard/OOPJavaCurriculumDesign/blob/main/LICENSE
+ */
+
 package me.stageguard.oopcd.backend.database;
+
+import me.stageguard.oopcd.backend.database.AbstractDataAccessObject.IDataAccessObjectData;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
-
-import me.stageguard.oopcd.backend.database.AbstractDataAccessObject.IDataAccessObjectData;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @SuppressWarnings({"unused", "DuplicatedCode"})
 public abstract class AbstractDataAccessObject<T extends IDataAccessObjectData> {
@@ -23,8 +32,8 @@ public abstract class AbstractDataAccessObject<T extends IDataAccessObjectData> 
         var dataFields = typeOfT().getFields();
         var statement = new StringBuilder();
         statement.append("CREATE TABLE IF NOT EXISTS ")
-            .append("`").append(tableName).append("`").append(" ")
-            .append("(");
+                .append("`").append(tableName).append("`").append(" ")
+                .append("(");
         String primaryKey = null;
         for(var i = 0; i < dataFields.length; i ++) {
             var property = dataFields[i].getAnnotation(FieldProperty.class);
@@ -137,8 +146,8 @@ public abstract class AbstractDataAccessObject<T extends IDataAccessObjectData> 
             String type = "varchar";
             try {
                 type = typeOfT()
-                    .getField(Objects.requireNonNull(getFieldViaPropertyName(k)))
-                    .getAnnotation(FieldProperty.class).type().toLowerCase();
+                        .getField(Objects.requireNonNull(getFieldViaPropertyName(k)))
+                        .getAnnotation(FieldProperty.class).type().toLowerCase();
             } catch (NoSuchFieldException ignored) { }
             if(isFieldANumber(type)) {
                 statement.append(v);
@@ -239,16 +248,20 @@ public abstract class AbstractDataAccessObject<T extends IDataAccessObjectData> 
     }
 
     protected abstract Class<T> typeOfT();
+
     protected abstract T serialize(ResultSet resultSet) throws SQLException;
 
     protected abstract static class IDataAccessObjectData {
         private Map<String, Object> initialValue = null;
+
         protected IDataAccessObjectData(Map<String, Object> initial) {
             if(initial != null) initialValue = initial;
         }
+
         public Map<String, Object> getInitialValue() {
             return initialValue;
         }
+
         protected abstract Map<String, Object> deserialize();
     }
 }
