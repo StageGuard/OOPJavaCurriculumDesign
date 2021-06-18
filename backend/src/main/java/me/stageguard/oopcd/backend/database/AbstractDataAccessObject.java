@@ -160,7 +160,9 @@ public abstract class AbstractDataAccessObject<T extends IDataAccessObjectData> 
         });
         statement.append("LIMIT 1;");
         try {
-            return execute(statement.toString());
+            var executeResult = execute(statement.toString());
+            data.resetInitialValue();
+            return executeResult;
         } catch (Exception ex) {
             throw new SQLException("SQL execution error in update: " + ex);
         }
@@ -239,11 +241,11 @@ public abstract class AbstractDataAccessObject<T extends IDataAccessObjectData> 
                 type.contains("float") || type.contains("bit");
     }
 
-    private int execute(String statement) {
+    private int execute(String statement) throws SQLException {
         return Database.executeBlocking(statement);
     }
 
-    private Optional<ResultSet> query(String statement) {
+    private Optional<ResultSet> query(String statement) throws SQLException {
         return Database.queryBlocking(statement);
     }
 
@@ -255,11 +257,15 @@ public abstract class AbstractDataAccessObject<T extends IDataAccessObjectData> 
         private Map<String, Object> initialValue = null;
 
         protected IDataAccessObjectData(Map<String, Object> initial) {
-            if(initial != null) initialValue = initial;
+            if (initial != null) initialValue = initial;
         }
 
         public Map<String, Object> getInitialValue() {
             return initialValue;
+        }
+
+        public void resetInitialValue() {
+            initialValue = deserialize();
         }
 
         protected abstract Map<String, Object> deserialize();

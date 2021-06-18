@@ -46,9 +46,9 @@ public class Database implements Runnable {
         return hikariDataSource.getConnection();
     }
 
-    public static Optional<ResultSet> queryBlocking(String statement) {
+    public static Optional<ResultSet> queryBlocking(String statement) throws SQLException {
         LOGGER.info("Execute: " + statement);
-        if(INSTANCE == null) {
+        if (INSTANCE == null) {
             LOGGER.error("Database hasn't been initialized, query operation will not execute.");
             return Optional.empty();
         }
@@ -57,14 +57,13 @@ public class Database implements Runnable {
             var connectionStatement = connection.createStatement();
             return Optional.of(connectionStatement.executeQuery(statement));
         } catch (SQLException ex) {
-            LOGGER.error("Error occurred while querying: " + ex);
-            return Optional.empty();
+            throw new SQLException("Error occurred while querying: " + ex);
         }
     }
 
-    public static int executeBlocking(String statement) {
+    public static int executeBlocking(String statement) throws SQLException {
         LOGGER.info("Execute: " + statement);
-        if(INSTANCE == null) {
+        if (INSTANCE == null) {
             LOGGER.error("Database hasn't been initialized, query operation will not execute.");
             return 0;
         }
@@ -73,8 +72,7 @@ public class Database implements Runnable {
             var connectionStatement = connection.createStatement();
             return connectionStatement.executeUpdate(statement);
         } catch (SQLException ex) {
-            LOGGER.error("Error occurred while querying: " + ex);
-            return 0;
+            throw new SQLException("Error occurred while querying: " + ex);
         }
     }
 

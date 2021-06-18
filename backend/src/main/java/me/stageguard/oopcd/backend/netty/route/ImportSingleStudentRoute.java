@@ -22,21 +22,19 @@ import me.stageguard.oopcd.backend.netty.dto.response.ErrorResponseDTO;
 import me.stageguard.oopcd.backend.netty.dto.response.SqlExecuteResultDTO;
 
 import java.nio.charset.StandardCharsets;
-import java.sql.SQLException;
-import java.util.HashMap;
 
-@Route(path = "/v1/importSingleStudent", method = RouteType.COMPOUND)
-public class StudentCURDRoute implements IRouteHandler {
+@Route(path = "/v1/importSingleStudent", method = RouteType.POST)
+public class ImportSingleStudentRoute implements IRouteHandler {
     @Override
-    public ResponseContentWrapper handle(FullHttpRequest request, HashMap<String, String> queryOpinions) {
+    public ResponseContentWrapper handle(FullHttpRequest request) {
         var content = request.content().toString(StandardCharsets.UTF_8);
         var stuImport = ImportSingleStudentDTO.deserialize(content);
         try {
             StudentDAO.INSTANCE.create();
             int sqlResult = StudentDAO.INSTANCE.insert(new StudentData(stuImport.name, stuImport.id, stuImport.clazz));
             return new ResponseContentWrapper(HttpResponseStatus.OK, new SqlExecuteResultDTO(sqlResult));
-        } catch (SQLException sqlex) {
-            return new ResponseContentWrapper(HttpResponseStatus.OK, new ErrorResponseDTO(sqlex.toString()));
+        } catch (Exception ex) {
+            return new ResponseContentWrapper(HttpResponseStatus.OK, new ErrorResponseDTO(ex.toString()));
         }
     }
 }

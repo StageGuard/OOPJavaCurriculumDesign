@@ -17,28 +17,32 @@ import me.stageguard.oopcd.backend.netty.ResponseContentWrapper;
 import me.stageguard.oopcd.backend.netty.Route;
 import me.stageguard.oopcd.backend.netty.RouteType;
 import me.stageguard.oopcd.backend.netty.dto.request.SqlStatementDTO;
+import me.stageguard.oopcd.backend.netty.dto.response.ErrorResponseDTO;
 import me.stageguard.oopcd.backend.netty.dto.response.SqlExecuteResultDTO;
 import me.stageguard.oopcd.backend.netty.dto.response.SqlQueryResultDTO;
 
 import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
 
 @Route(path = "/test/executeSQLStatement", method = RouteType.POST)
 public class TestExecuteQueryRoute implements IRouteHandler {
     @Override
-    public ResponseContentWrapper handle(FullHttpRequest request, HashMap<String, String> queryOpinions) {
+    public ResponseContentWrapper handle(FullHttpRequest request) {
         var content = request.content().toString(StandardCharsets.UTF_8);
         var dto = SqlStatementDTO.deserialize(content);
-        if (dto.expression.trim().toLowerCase().startsWith("select")) {
-            var execute = Database.queryBlocking(dto.expression);
-            if (execute.isEmpty()) {
-                return new ResponseContentWrapper(HttpResponseStatus.NO_CONTENT, new SqlExecuteResultDTO(-1));
-            } else {
-                var result = execute.get();
-                return new ResponseContentWrapper(HttpResponseStatus.OK, new SqlQueryResultDTO(result));
+        try {
+            if (dto.expression.trim().toLowerCase().startsWith("select")) {
+                var execute = Database.queryBlocking(dto.expression);
+                if (execute.isEmpty()) {
+                    return new ResponseContentWrapper(HttpResponseStatus.NO_CONTENT, new SqlExecuteResultDTO(-1));
+                } else {
+                    var result = execute.get();
+                    return new ResponseContentWrapper(HttpResponseStatus.OK, new SqlQueryResultDTO(result));
+                }
             }
+            var execute = Database.executeBlocking(dto.expression);
+            return new ResponseContentWrapper(HttpResponseStatus.OK, new SqlExecuteResultDTO(execute));
+        } catch (Exception ex) {
+            return new ResponseContentWrapper(HttpResponseStatus.OK, new ErrorResponseDTO(ex.toString()));
         }
-        var execute = Database.executeBlocking(dto.expression);
-        return new ResponseContentWrapper(HttpResponseStatus.OK, new SqlExecuteResultDTO(execute));
     }
 }
