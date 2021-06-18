@@ -33,7 +33,9 @@ public class StudentDAO extends AbstractDataAccessObject<StudentDAO.StudentData>
         return new StudentData(
                 resultSet.getString(1),
                 resultSet.getLong(2),
-                resultSet.getString(3)
+                resultSet.getString(3),
+                resultSet.getInt(4),
+                resultSet.getInt(5)
         );
     }
 
@@ -44,21 +46,43 @@ public class StudentDAO extends AbstractDataAccessObject<StudentDAO.StudentData>
         public long id;
         @FieldProperty(name = "class", type = "varchar(50)")
         public String clazz;
+        @FieldProperty(name = "totalAnswered", type = "int", defaultV = "0")
+        public int totalAnswered;
+        @FieldProperty(name = "rightAnswered", type = "int", defaultV = "0")
+        public int rightAnswered;
 
         public StudentData() {
             super(null);
         }
 
-        public StudentData(String name, long id, String clazz) {
-            super(Map.of("name", name, "id", id, "class", clazz));
+        protected StudentData(String name, long id, String clazz, int totalAnswered, int rightAnswered) {
+            super(Map.of(
+                    "name", name,
+                    "id", id,
+                    "class", clazz,
+                    "totalAnswered", totalAnswered,
+                    "rightAnswered", rightAnswered
+            ));
             this.name = name;
             this.id = id;
             this.clazz = clazz;
+            this.totalAnswered = totalAnswered;
+            this.rightAnswered = rightAnswered;
+        }
+
+        public StudentData(String name, long id, String clazz) {
+            this(name, id, clazz, 0, 0);
         }
 
         @Override
         protected Map<String, Object> deserialize() {
-            return Map.of("name", name, "id", id, "class", clazz);
+            return Map.of(
+                    "name", name,
+                    "id", id,
+                    "class", clazz,
+                    "totalAnswered", totalAnswered,
+                    "rightAnswered", rightAnswered
+            );
         }
     }
 }

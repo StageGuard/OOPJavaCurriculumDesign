@@ -11,8 +11,6 @@ package me.stageguard.oopcd.backend.netty;
 
 import io.netty.handler.codec.http.FullHttpRequest;
 
-import java.util.HashMap;
-
 public interface IRouteHandler {
-    ResponseContentWrapper handle(FullHttpRequest request, HashMap<String, String> queryOpinions);
+    ResponseContentWrapper handle(FullHttpRequest request);
 }

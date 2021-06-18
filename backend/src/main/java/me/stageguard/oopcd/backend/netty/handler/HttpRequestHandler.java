@@ -37,24 +37,39 @@ public class HttpRequestHandler extends SimpleChannelInboundHandler<FullHttpRequ
         this.mHandlers = handlers;
     }
 
+    public static HashMap<String, String> decodeQueryOpinions(String raw) {
+        if (!raw.contains("&")) {
+            var single = raw.split("=");
+            return new HashMap<>(Map.of(
+                    URLDecoder.decode(single[0], StandardCharsets.UTF_8),
+                    URLDecoder.decode(single[1], StandardCharsets.UTF_8)
+            ));
+        } else {
+            var multi = raw.split("&");
+            HashMap<String, String> opinions = new HashMap<>();
+            for (var element : multi) {
+                var single = element.split("=");
+                opinions.put(
+                        URLDecoder.decode(single[0], StandardCharsets.UTF_8),
+                        URLDecoder.decode(single[1], StandardCharsets.UTF_8)
+                );
+            }
+            return opinions;
+        }
+    }
+
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, FullHttpRequest msg) {
         DefaultFullHttpResponse response = null;
-        for(IRouteHandler h : mHandlers) {
+        for (IRouteHandler h : mHandlers) {
             var route = h.getClass().getAnnotation(Route.class);
-            if(route != null) {
+            if (route != null) {
                 var method = route.method();
                 var path = route.path();
                 var reqPath = msg.uri();
-                HashMap<String, String> queryOpinions = null;
-                if (reqPath.contains("?")) {
-                    var split = msg.uri().split("\\?");
-                    reqPath = URLDecoder.decode(split[0], StandardCharsets.UTF_8);
-                    queryOpinions = decodeQueryOpinions(split[1]);
-                }
-                if ((msg.method().toString().equals(method) || method.equals(RouteType.COMPOUND)) && reqPath.equals(path)) {
+                if ((msg.method().toString().equals(method) || method.equals(RouteType.COMPOUND)) && reqPath.startsWith(path)) {
                     try {
-                        var handled = h.handle(msg, queryOpinions);
+                        var handled = h.handle(msg);
                         response = new DefaultFullHttpResponse(HttpVersion.HTTP_1_1,
                                 handled.getStatus(),
                                 Unpooled.wrappedBuffer(handled.getContent().getBytes()));
@@ -88,27 +103,6 @@ public class HttpRequestHandler extends SimpleChannelInboundHandler<FullHttpRequ
         heads.add(HttpHeaderNames.CONTENT_LENGTH, response.content().readableBytes());
         heads.add(HttpHeaderNames.CONNECTION, HttpHeaderValues.KEEP_ALIVE);
         ctx.write(response);
-    }
-
-    private HashMap<String, String> decodeQueryOpinions(String raw) {
-        if (!raw.contains("&")) {
-            var single = raw.split("=");
-            return new HashMap<>(Map.of(
-                    URLDecoder.decode(single[0], StandardCharsets.UTF_8),
-                    URLDecoder.decode(single[1], StandardCharsets.UTF_8)
-            ));
-        } else {
-            var multi = raw.split("&");
-            HashMap<String, String> opinions = new HashMap<>();
-            for (var element : multi) {
-                var single = element.split("=");
-                opinions.put(
-                        URLDecoder.decode(single[0], StandardCharsets.UTF_8),
-                        URLDecoder.decode(single[1], StandardCharsets.UTF_8)
-                );
-            }
-            return opinions;
-        }
     }
 
     @Override
