@@ -24,7 +24,7 @@ public abstract class AbstractDataAccessObject<T extends IDataAccessObjectData> 
         var statement = new StringBuilder();
         statement.append("CREATE TABLE IF NOT EXISTS ")
             .append("`").append(tableName).append("`").append(" ")
-            .append("(").append("\n");
+            .append("(");
         for(var i = 0; i < dataFields.length; i ++) {
             var property = dataFields[i].getAnnotation(FieldProperty.class);
             if(property != null) {
@@ -45,11 +45,11 @@ public abstract class AbstractDataAccessObject<T extends IDataAccessObjectData> 
                     }
                     statement.append(property.order() == FieldProperty.FieldOrder.FIRST ? "FIRST" : ("AFTER " + property.after()));
                 }
-                statement.append(i == dataFields.length - 1 ? "\n" : ",\n");
+                if(i != dataFields.length - 1) statement.append(", ");
+
             }
         }
         statement.append(") COLLATE=`utf8_general_ci`;");
-        LOGGER.info(statement.toString());
         try {
             return execute(statement.toString());
         } catch (Exception ex) {
@@ -83,7 +83,7 @@ public abstract class AbstractDataAccessObject<T extends IDataAccessObjectData> 
             statement.append("(");
             vs.forEach((obj) -> {
                 if(obj instanceof String) {
-                    statement.append("`").append(obj).append("`");
+                    statement.append("'").append(obj).append("'");
                 } else {
                     statement.append(obj);
                 }
@@ -97,7 +97,6 @@ public abstract class AbstractDataAccessObject<T extends IDataAccessObjectData> 
         }
         index.set(0);
         statement.append(";");
-        LOGGER.info(statement.toString());
         try {
             return execute(statement.toString());
         } catch (Exception ex) {
@@ -142,7 +141,6 @@ public abstract class AbstractDataAccessObject<T extends IDataAccessObjectData> 
             index.getAndIncrement();
         });
         statement.append("LIMIT 1;");
-        LOGGER.info(statement.toString());
         try {
             return execute(statement.toString());
         } catch (Exception ex) {
@@ -166,7 +164,6 @@ public abstract class AbstractDataAccessObject<T extends IDataAccessObjectData> 
         statement.append("LIMIT ");
         statement.append(limit);
         statement.append(";");
-        LOGGER.info(statement.toString());
         Optional<ResultSet> result;
         try {
             result = query(statement.toString());
@@ -201,7 +198,6 @@ public abstract class AbstractDataAccessObject<T extends IDataAccessObjectData> 
         statement.append("LIMIT ");
         statement.append(limit);
         statement.append(";");
-        LOGGER.info(statement.toString());
         try {
             return execute(statement.toString());
         } catch (Exception ex) {

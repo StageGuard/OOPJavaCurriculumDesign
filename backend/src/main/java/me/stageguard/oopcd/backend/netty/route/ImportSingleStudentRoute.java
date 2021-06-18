@@ -15,7 +15,7 @@ import me.stageguard.oopcd.backend.netty.dto.response.SqlExecuteResultDTO;
 import java.nio.charset.StandardCharsets;
 import java.sql.SQLException;
 
-@Route(path = "v1/importSingleStudent", method = RouteType.POST)
+@Route(path = "/v1/importSingleStudent", method = RouteType.POST)
 public class ImportSingleStudentRoute implements IRouteHandler {
     @Override
     public ResponseContentWrapper handle(FullHttpRequest request) {

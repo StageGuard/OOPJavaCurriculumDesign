@@ -29,19 +29,10 @@ public class StudentDAO extends AbstractDataAccessObject<StudentDAO.StudentData>
     }
 
     public static class StudentData extends IDataAccessObjectData {
-        /**
-         * 学生姓名
-         */
-        @FieldProperty(name = "name", type = "int", unsigned = true, defaultV = "1")
+        @FieldProperty(name = "name", type = "varchar(10)")
         public String name;
-        /**
-         * 学生学号
-         */
         @FieldProperty(name = "id", type = "bigint")
         public long id;
-        /**
-         * 学生班级
-         */
         @FieldProperty(name = "class", type = "varchar(50)")
         public String clazz;
 
