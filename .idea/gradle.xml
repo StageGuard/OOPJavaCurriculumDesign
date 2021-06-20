@@ -12,6 +12,7 @@
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/backend" />
             <option value="$PROJECT_DIR$/frontend-android" />
+            <option value="$PROJECT_DIR$/frontend-desktop" />
           </set>
         </option>
         <option name="resolveModulePerSourceSet" value="false" />

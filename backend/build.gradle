@@ -17,3 +17,11 @@ dependencies {
 test {
     useJUnitPlatform()
 }
+
+shadowJar {
+    jar {
+        manifest {
+            attributes 'Main-Class': 'me.stageguard.oopcd.backend.ApplicationMain'
+        }
+    }
+}
