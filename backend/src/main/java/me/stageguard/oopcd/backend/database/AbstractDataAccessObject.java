@@ -176,11 +176,11 @@ public abstract class AbstractDataAccessObject<T extends IDataAccessObjectData> 
         var statement = new StringBuilder();
         var filter = filterSAM.invoke(new ConditionFilter());
         statement.append("SELECT * FROM `").append(tableName).append("`");
-        if(!filter.isEmpty()) {
+        if (!filter.isEmpty()) {
             statement.append(" WHERE ");
             statement.append(filter);
-            statement.append(" ");
         }
+        statement.append(" ");
         statement.append("LIMIT ");
         statement.append(limit);
         statement.append(";");
@@ -190,7 +190,7 @@ public abstract class AbstractDataAccessObject<T extends IDataAccessObjectData> 
         } catch (Exception ex) {
             throw new SQLException("SQL execution error in create: " + ex);
         }
-        if(result.isEmpty()) {
+        if (result.isEmpty()) {
             return new ArrayList<>();
         } else {
             var list = new ArrayList<T>();

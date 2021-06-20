@@ -62,7 +62,7 @@ public class ConditionFilter {
             sb.append("`").append(left).append("`");
             sb.append(op);
             if(right instanceof String) {
-                sb.append("`").append(right).append("`");
+                sb.append("'").append(right).append("'");
             } else {
                 sb.append(right);
             }
