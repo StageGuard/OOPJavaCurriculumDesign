@@ -15,6 +15,7 @@ import me.stageguard.oopcd.backend.database.FieldProperty;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Map;
+import java.util.Objects;
 
 public class StudentDAO extends AbstractDataAccessObject<StudentDAO.StudentData> {
     public static final StudentDAO INSTANCE = new StudentDAO();
@@ -83,6 +84,19 @@ public class StudentDAO extends AbstractDataAccessObject<StudentDAO.StudentData>
                     "totalAnswered", totalAnswered,
                     "rightAnswered", rightAnswered
             );
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            StudentData that = (StudentData) o;
+            return id == that.id && totalAnswered == that.totalAnswered && rightAnswered == that.rightAnswered && name.equals(that.name) && clazz.equals(that.clazz);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(name, id, clazz, totalAnswered, rightAnswered);
         }
     }
 }
