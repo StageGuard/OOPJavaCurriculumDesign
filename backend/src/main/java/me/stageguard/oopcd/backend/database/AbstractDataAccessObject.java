@@ -134,7 +134,7 @@ public abstract class AbstractDataAccessObject<T extends IDataAccessObjectData> 
         AtomicInteger index = new AtomicInteger();
         kvMapping.forEach((k, v) -> {
             statement.append("`").append(k).append("`=");
-            statement.append("`").append(v).append("`");
+            statement.append("'").append(v).append("'");
             if(index.get() != kvMapping.size() - 1) statement.append(",");
             statement.append(" ");
             index.getAndIncrement();
@@ -150,9 +150,9 @@ public abstract class AbstractDataAccessObject<T extends IDataAccessObjectData> 
                         .getAnnotation(FieldProperty.class).type().toLowerCase();
             } catch (NoSuchFieldException ignored) { }
             if(isFieldANumber(type)) {
-                statement.append(v);
+                statement.append(v).append(" ");
             } else {
-                statement.append("`").append(v).append("` ");
+                statement.append("'").append(v).append("' ");
             }
             if(index.get() != initial.size() - 1) statement.append("AND");
             statement.append(" ");
