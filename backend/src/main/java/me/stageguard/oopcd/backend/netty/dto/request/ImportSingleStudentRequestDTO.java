@@ -16,21 +16,21 @@ import me.stageguard.oopcd.backend.netty.dto.GlobalGson;
 import java.io.StringReader;
 import java.lang.reflect.Type;
 
-public class ImportSingleStudentDTO {
+public class ImportSingleStudentRequestDTO {
     public String name;
     public Long id;
     public String clazz;
 
-    public static ImportSingleStudentDTO deserialize(String data) {
-        return GlobalGson.INSTANCE.fromJson(new JsonReader(new StringReader(data)), ImportSingleStudentDTO.class);
+    public static ImportSingleStudentRequestDTO deserialize(String data) {
+        return GlobalGson.INSTANCE.fromJson(new JsonReader(new StringReader(data)), ImportSingleStudentRequestDTO.class);
     }
 
-    public static class Deserializer implements JsonDeserializer<ImportSingleStudentDTO> {
+    public static class Deserializer implements JsonDeserializer<ImportSingleStudentRequestDTO> {
         @Override
-        public ImportSingleStudentDTO deserialize(
+        public ImportSingleStudentRequestDTO deserialize(
                 JsonElement json, Type typeOfT, JsonDeserializationContext context
         ) throws JsonParseException {
-            ImportSingleStudentDTO obj = new ImportSingleStudentDTO();
+            ImportSingleStudentRequestDTO obj = new ImportSingleStudentRequestDTO();
             JsonObject jsonObject = json.getAsJsonObject();
             obj.name = jsonObject.get("name").getAsString();
             obj.id = jsonObject.get("id").getAsLong();

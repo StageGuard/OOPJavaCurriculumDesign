@@ -11,6 +11,7 @@ package me.stageguard.oopcd.backend;
 
 import me.stageguard.oopcd.backend.database.Database.DatabaseBuilder;
 import me.stageguard.oopcd.backend.netty.NettyHttpServer.NettyHttpServerBuilder;
+import me.stageguard.oopcd.backend.netty.route.GetStudentsRoute;
 import me.stageguard.oopcd.backend.netty.route.ImportSingleStudentRoute;
 import me.stageguard.oopcd.backend.netty.route.ImportStudentsRoute;
 import me.stageguard.oopcd.backend.netty.route.TestExecuteQueryRoute;
@@ -33,7 +34,8 @@ public class ApplicationMain {
                 .route(new ArrayList<>(Arrays.asList(
                         new TestExecuteQueryRoute(),
                         new ImportSingleStudentRoute(),
-                        new ImportStudentsRoute()
+                        new ImportStudentsRoute(),
+                        new GetStudentsRoute()
                 )))
                 .authKey("114514")
                 .build();

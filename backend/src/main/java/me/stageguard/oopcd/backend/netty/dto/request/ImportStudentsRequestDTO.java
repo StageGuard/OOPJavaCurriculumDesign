@@ -21,23 +21,23 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ImportStudentsDTO {
-    public List<ImportSingleStudentDTO> students;
+public class ImportStudentsRequestDTO {
+    public List<ImportSingleStudentRequestDTO> students;
 
-    public static ImportStudentsDTO deserialize(String data) {
-        return GlobalGson.INSTANCE.fromJson(new JsonReader(new StringReader(data)), ImportStudentsDTO.class);
+    public static ImportStudentsRequestDTO deserialize(String data) {
+        return GlobalGson.INSTANCE.fromJson(new JsonReader(new StringReader(data)), ImportStudentsRequestDTO.class);
     }
 
-    public static class Deserializer implements JsonDeserializer<ImportStudentsDTO> {
+    public static class Deserializer implements JsonDeserializer<ImportStudentsRequestDTO> {
         @Override
-        public ImportStudentsDTO deserialize(
+        public ImportStudentsRequestDTO deserialize(
                 JsonElement json, Type typeOfT, JsonDeserializationContext context
         ) throws JsonParseException {
-            ImportStudentsDTO obj = new ImportStudentsDTO();
+            ImportStudentsRequestDTO obj = new ImportStudentsRequestDTO();
             obj.students = new ArrayList<>();
             var students = json.getAsJsonObject().getAsJsonArray("students");
             for (var single : students) {
-                obj.students.add(ImportSingleStudentDTO.deserialize(single.toString()));
+                obj.students.add(ImportSingleStudentRequestDTO.deserialize(single.toString()));
             }
             return obj;
         }

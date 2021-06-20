@@ -16,10 +16,10 @@ import me.stageguard.oopcd.backend.netty.IRouteHandler;
 import me.stageguard.oopcd.backend.netty.ResponseContentWrapper;
 import me.stageguard.oopcd.backend.netty.Route;
 import me.stageguard.oopcd.backend.netty.RouteType;
-import me.stageguard.oopcd.backend.netty.dto.request.SqlStatementDTO;
+import me.stageguard.oopcd.backend.netty.dto.request.SqlStatementRequestDTO;
 import me.stageguard.oopcd.backend.netty.dto.response.ErrorResponseDTO;
-import me.stageguard.oopcd.backend.netty.dto.response.SqlExecuteResultDTO;
-import me.stageguard.oopcd.backend.netty.dto.response.SqlQueryResultDTO;
+import me.stageguard.oopcd.backend.netty.dto.response.SqlExecuteResponseDTO;
+import me.stageguard.oopcd.backend.netty.dto.response.SqlQueryResponseDTO;
 
 import java.nio.charset.StandardCharsets;
 
@@ -28,19 +28,19 @@ public class TestExecuteQueryRoute implements IRouteHandler {
     @Override
     public ResponseContentWrapper handle(FullHttpRequest request) {
         var content = request.content().toString(StandardCharsets.UTF_8);
-        var dto = SqlStatementDTO.deserialize(content);
+        var dto = SqlStatementRequestDTO.deserialize(content);
         try {
             if (dto.expression.trim().toLowerCase().startsWith("select")) {
                 var execute = Database.queryBlocking(dto.expression);
                 if (execute.isEmpty()) {
-                    return new ResponseContentWrapper(HttpResponseStatus.NO_CONTENT, new SqlExecuteResultDTO(-1));
+                    return new ResponseContentWrapper(HttpResponseStatus.NO_CONTENT, new SqlExecuteResponseDTO(-1));
                 } else {
                     var result = execute.get();
-                    return new ResponseContentWrapper(HttpResponseStatus.OK, new SqlQueryResultDTO(result));
+                    return new ResponseContentWrapper(HttpResponseStatus.OK, new SqlQueryResponseDTO(result));
                 }
             }
             var execute = Database.executeBlocking(dto.expression);
-            return new ResponseContentWrapper(HttpResponseStatus.OK, new SqlExecuteResultDTO(execute));
+            return new ResponseContentWrapper(HttpResponseStatus.OK, new SqlExecuteResponseDTO(execute));
         } catch (Exception ex) {
             return new ResponseContentWrapper(HttpResponseStatus.OK, new ErrorResponseDTO(ex.toString()));
         }

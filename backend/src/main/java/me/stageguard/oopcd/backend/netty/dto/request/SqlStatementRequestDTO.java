@@ -16,17 +16,17 @@ import me.stageguard.oopcd.backend.netty.dto.GlobalGson;
 import java.io.StringReader;
 import java.lang.reflect.Type;
 
-public class SqlStatementDTO {
+public class SqlStatementRequestDTO {
     public String expression;
 
-    public static SqlStatementDTO deserialize(String data) {
-        return GlobalGson.INSTANCE.fromJson(new JsonReader(new StringReader(data)), SqlStatementDTO.class);
+    public static SqlStatementRequestDTO deserialize(String data) {
+        return GlobalGson.INSTANCE.fromJson(new JsonReader(new StringReader(data)), SqlStatementRequestDTO.class);
     }
 
-    public static class Deserializer implements JsonDeserializer<SqlStatementDTO> {
+    public static class Deserializer implements JsonDeserializer<SqlStatementRequestDTO> {
         @Override
-        public SqlStatementDTO deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
-            SqlStatementDTO obj = new SqlStatementDTO();
+        public SqlStatementRequestDTO deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
+            SqlStatementRequestDTO obj = new SqlStatementRequestDTO();
             JsonObject jsonObject = json.getAsJsonObject();
             obj.expression = jsonObject.get("expression").getAsString();
             return obj;

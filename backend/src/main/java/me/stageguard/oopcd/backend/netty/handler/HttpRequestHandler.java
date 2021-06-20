@@ -20,11 +20,7 @@ import me.stageguard.oopcd.backend.netty.RouteType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.net.URLDecoder;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 
 @ChannelHandler.Sharable
 public class HttpRequestHandler extends SimpleChannelInboundHandler<FullHttpRequest> {
@@ -35,27 +31,6 @@ public class HttpRequestHandler extends SimpleChannelInboundHandler<FullHttpRequ
 
     public void setHandlers(ArrayList<IRouteHandler> handlers) {
         this.mHandlers = handlers;
-    }
-
-    public static HashMap<String, String> decodeQueryOpinions(String raw) {
-        if (!raw.contains("&")) {
-            var single = raw.split("=");
-            return new HashMap<>(Map.of(
-                    URLDecoder.decode(single[0], StandardCharsets.UTF_8),
-                    URLDecoder.decode(single[1], StandardCharsets.UTF_8)
-            ));
-        } else {
-            var multi = raw.split("&");
-            HashMap<String, String> opinions = new HashMap<>();
-            for (var element : multi) {
-                var single = element.split("=");
-                opinions.put(
-                        URLDecoder.decode(single[0], StandardCharsets.UTF_8),
-                        URLDecoder.decode(single[1], StandardCharsets.UTF_8)
-                );
-            }
-            return opinions;
-        }
     }
 
     @Override

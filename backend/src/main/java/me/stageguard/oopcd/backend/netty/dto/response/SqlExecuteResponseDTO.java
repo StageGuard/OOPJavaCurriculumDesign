@@ -17,13 +17,12 @@ import me.stageguard.oopcd.backend.netty.dto.GlobalGson;
 import me.stageguard.oopcd.backend.netty.dto.IResponseDTO;
 
 import java.lang.reflect.Type;
-import java.sql.ResultSet;
 
-public class SqlQueryResultDTO implements IResponseDTO {
-    public ResultSet result;
+public class SqlExecuteResponseDTO implements IResponseDTO {
+    public int result;
 
-    public SqlQueryResultDTO(ResultSet resultSet) {
-        this.result = resultSet;
+    public SqlExecuteResponseDTO(int result) {
+        this.result = result;
     }
 
     @Override
@@ -31,12 +30,11 @@ public class SqlQueryResultDTO implements IResponseDTO {
         return GlobalGson.INSTANCE.toJson(this);
     }
 
-    public static class Serializer implements JsonSerializer<SqlQueryResultDTO> {
-
+    public static class Serializer implements JsonSerializer<SqlExecuteResponseDTO> {
         @Override
-        public JsonElement serialize(SqlQueryResultDTO src, Type typeOfSrc, JsonSerializationContext context) {
+        public JsonElement serialize(SqlExecuteResponseDTO src, Type typeOfSrc, JsonSerializationContext context) {
             JsonObject jsonObject = new JsonObject();
-            jsonObject.addProperty("result", src.result.toString());
+            jsonObject.addProperty("result", src.result);
             return jsonObject;
         }
     }

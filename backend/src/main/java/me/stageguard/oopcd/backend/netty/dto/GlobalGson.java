@@ -11,20 +11,20 @@ package me.stageguard.oopcd.backend.netty.dto;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import me.stageguard.oopcd.backend.netty.dto.request.ImportSingleStudentDTO;
-import me.stageguard.oopcd.backend.netty.dto.request.ImportStudentsDTO;
-import me.stageguard.oopcd.backend.netty.dto.request.SqlStatementDTO;
+import me.stageguard.oopcd.backend.netty.dto.request.ImportSingleStudentRequestDTO;
+import me.stageguard.oopcd.backend.netty.dto.request.ImportStudentsRequestDTO;
+import me.stageguard.oopcd.backend.netty.dto.request.SqlStatementRequestDTO;
 import me.stageguard.oopcd.backend.netty.dto.response.ErrorResponseDTO;
-import me.stageguard.oopcd.backend.netty.dto.response.SqlExecuteResultDTO;
-import me.stageguard.oopcd.backend.netty.dto.response.SqlQueryResultDTO;
+import me.stageguard.oopcd.backend.netty.dto.response.SqlExecuteResponseDTO;
+import me.stageguard.oopcd.backend.netty.dto.response.SqlQueryResponseDTO;
 
 public class GlobalGson {
     public static Gson INSTANCE = (new GsonBuilder())
-            .registerTypeAdapter(SqlStatementDTO.class, new SqlStatementDTO.Deserializer())
-            .registerTypeAdapter(SqlExecuteResultDTO.class, new SqlExecuteResultDTO.Serializer())
-            .registerTypeAdapter(SqlQueryResultDTO.class, new SqlQueryResultDTO.Serializer())
+            .registerTypeAdapter(SqlStatementRequestDTO.class, new SqlStatementRequestDTO.Deserializer())
+            .registerTypeAdapter(SqlExecuteResponseDTO.class, new SqlExecuteResponseDTO.Serializer())
+            .registerTypeAdapter(SqlQueryResponseDTO.class, new SqlQueryResponseDTO.Serializer())
             .registerTypeAdapter(ErrorResponseDTO.class, new ErrorResponseDTO.Serializer())
-            .registerTypeAdapter(ImportSingleStudentDTO.class, new ImportSingleStudentDTO.Deserializer())
-            .registerTypeAdapter(ImportStudentsDTO.class, new ImportStudentsDTO.Deserializer())
+            .registerTypeAdapter(ImportSingleStudentRequestDTO.class, new ImportSingleStudentRequestDTO.Deserializer())
+            .registerTypeAdapter(ImportStudentsRequestDTO.class, new ImportStudentsRequestDTO.Deserializer())
             .create();
 }
