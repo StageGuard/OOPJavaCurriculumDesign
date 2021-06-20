@@ -11,26 +11,26 @@ package me.stageguard.oopcd.backend.netty.dto;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import me.stageguard.oopcd.backend.netty.dto.request.GetStudentsRequestDTO;
-import me.stageguard.oopcd.backend.netty.dto.request.ImportSingleStudentRequestDTO;
-import me.stageguard.oopcd.backend.netty.dto.request.ImportStudentsRequestDTO;
-import me.stageguard.oopcd.backend.netty.dto.request.SqlStatementRequestDTO;
-import me.stageguard.oopcd.backend.netty.dto.response.ErrorResponseDTO;
-import me.stageguard.oopcd.backend.netty.dto.response.GetStudentsResponseDTO;
-import me.stageguard.oopcd.backend.netty.dto.response.SqlExecuteResponseDTO;
-import me.stageguard.oopcd.backend.netty.dto.response.SqlQueryResponseDTO;
+import me.stageguard.oopcd.backend.netty.dto.request.*;
+import me.stageguard.oopcd.backend.netty.dto.response.*;
 
 public class GlobalGson {
-    public static Gson INSTANCE = (new GsonBuilder())
+    public final static Gson INSTANCE = (new GsonBuilder())
             //deserializers
             .registerTypeAdapter(SqlStatementRequestDTO.class, new SqlStatementRequestDTO.Deserializer())
             .registerTypeAdapter(ImportSingleStudentRequestDTO.class, new ImportSingleStudentRequestDTO.Deserializer())
             .registerTypeAdapter(GetStudentsRequestDTO.class, new GetStudentsRequestDTO.Deserializer())
             .registerTypeAdapter(ImportStudentsRequestDTO.class, new ImportStudentsRequestDTO.Deserializer())
+            .registerTypeAdapter(CreateRollSessionRequestDTO.class, new CreateRollSessionRequestDTO.Deserializer())
+            .registerTypeAdapter(RollRequestDTO.class, new RollRequestDTO.Deserializer())
+            .registerTypeAdapter(AnswerRequestDTO.class, new AnswerRequestDTO.Deserializer())
             //serializers
             .registerTypeAdapter(SqlExecuteResponseDTO.class, new SqlExecuteResponseDTO.Serializer())
             .registerTypeAdapter(SqlQueryResponseDTO.class, new SqlQueryResponseDTO.Serializer())
             .registerTypeAdapter(ErrorResponseDTO.class, new ErrorResponseDTO.Serializer())
             .registerTypeAdapter(GetStudentsResponseDTO.class, new GetStudentsResponseDTO.Serializer())
+            .registerTypeAdapter(CreateRollSessionResponseDTO.class, new CreateRollSessionResponseDTO.Serializer())
+            .registerTypeAdapter(RollResponseDTO.class, new RollResponseDTO.Serializer())
+            .registerTypeAdapter(AnswerResponseDTO.class, new AnswerResponseDTO.Serializer())
             .create();
 }

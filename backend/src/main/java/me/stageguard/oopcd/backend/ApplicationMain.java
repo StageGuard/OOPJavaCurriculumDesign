@@ -11,10 +11,7 @@ package me.stageguard.oopcd.backend;
 
 import me.stageguard.oopcd.backend.database.Database.DatabaseBuilder;
 import me.stageguard.oopcd.backend.netty.NettyHttpServer.NettyHttpServerBuilder;
-import me.stageguard.oopcd.backend.netty.route.GetStudentsRoute;
-import me.stageguard.oopcd.backend.netty.route.ImportSingleStudentRoute;
-import me.stageguard.oopcd.backend.netty.route.ImportStudentsRoute;
-import me.stageguard.oopcd.backend.netty.route.TestExecuteQueryRoute;
+import me.stageguard.oopcd.backend.netty.route.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,7 +32,10 @@ public class ApplicationMain {
                         new TestExecuteQueryRoute(),
                         new ImportSingleStudentRoute(),
                         new ImportStudentsRoute(),
-                        new GetStudentsRoute()
+                        new GetStudentsRoute(),
+                        new CreateRollSessionRoute(),
+                        new RollRoute(),
+                        new AnswerRoute()
                 )))
                 .authKey("114514")
                 .build();
