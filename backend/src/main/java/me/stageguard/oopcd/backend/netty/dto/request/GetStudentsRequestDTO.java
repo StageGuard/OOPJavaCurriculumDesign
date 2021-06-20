@@ -26,22 +26,23 @@ public class GetStudentsRequestDTO {
             JsonObject jsonObject = json.getAsJsonObject();
             obj.limit = jsonObject.get("limit").getAsLong();
             obj.filterOpinions = new HashMap<>();
-            var filters = json.getAsJsonObject().getAsJsonObject("filter").entrySet();
-            for (var filter : filters) {
-                var expr = filter.getValue().getAsJsonObject();
-                var arrV = expr.getAsJsonPrimitive("value");
-                Integer assumeInt = null;
+            var filters = json.getAsJsonObject().getAsJsonArray("filter");
+            for (var element : filters) {
+                var filter = element.getAsJsonObject();
+                var op = filter.get("op").getAsString();
+                var value = filter.getAsJsonPrimitive("value");
+                Integer assumeNumber = null;
                 try {
-                    assumeInt = arrV.getAsInt();
+                    assumeNumber = value.getAsInt();
                 } catch (Exception ignored) {
                 }
-                if (assumeInt == null) {
-                    obj.filterOpinions.put(filter.getKey(), new Pair<>(
-                            expr.get("key").getAsString(),
-                            expr.get("value").getAsString()
+                if (assumeNumber == null) {
+                    obj.filterOpinions.put(op, new Pair<>(
+                            filter.get("key").getAsString(),
+                            filter.get("value").getAsString()
                     ));
                 } else {
-                    obj.filterOpinions.put(filter.getKey(), new Pair<>(expr.get("key").getAsString(), assumeInt));
+                    obj.filterOpinions.put(op, new Pair<>(filter.get("key").getAsString(), assumeNumber));
                 }
 
             }
