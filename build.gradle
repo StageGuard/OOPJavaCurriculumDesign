@@ -1,5 +1,5 @@
 buildscript {
-    ext.kotlin_version = "1.5.20-RC"
+    ext.kotlin_version = "1.5.10"
     repositories {
         google()
         jcenter()
@@ -13,11 +13,6 @@ buildscript {
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
     }
-}
-
-plugins {
-    id 'java'
-    id 'org.jetbrains.kotlin.jvm' version '1.5.10'
 }
 
 allprojects {
