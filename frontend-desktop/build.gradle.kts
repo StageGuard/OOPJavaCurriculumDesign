@@ -15,6 +15,9 @@ repositories {
 dependencies {
     testImplementation(kotlin("test"))
     implementation(compose.desktop.currentOs)
+    // Decompose : Decompose
+    implementation("com.arkivanov.decompose:decompose:0.2.5")
+    implementation("com.arkivanov.decompose:extensions-compose-jetbrains:0.2.5")
 }
 
 tasks.test {
