@@ -52,13 +52,14 @@ public class Database implements Runnable {
             LOGGER.error("Database hasn't been initialized, query operation will not execute.");
             return Optional.empty();
         }
-        try {
-            var connection = INSTANCE.getConnection();
+        Optional<ResultSet> result;
+        try (var connection = INSTANCE.getConnection()) {
             var connectionStatement = connection.createStatement();
-            return Optional.of(connectionStatement.executeQuery(statement));
+            result = Optional.of(connectionStatement.executeQuery(statement));
         } catch (SQLException ex) {
             throw new SQLException("Error occurred while querying: " + ex);
         }
+        return result;
     }
 
     public static int executeBlocking(String statement) throws SQLException {
@@ -67,13 +68,14 @@ public class Database implements Runnable {
             LOGGER.error("Database hasn't been initialized, query operation will not execute.");
             return 0;
         }
-        try {
-            var connection = INSTANCE.getConnection();
+        int result;
+        try (var connection = INSTANCE.getConnection();) {
             var connectionStatement = connection.createStatement();
-            return connectionStatement.executeUpdate(statement);
+            result = connectionStatement.executeUpdate(statement);
         } catch (SQLException ex) {
             throw new SQLException("Error occurred while querying: " + ex);
         }
+        return result;
     }
 
     @Override
