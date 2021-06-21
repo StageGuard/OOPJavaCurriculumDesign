@@ -9,6 +9,7 @@
 
 package me.stageguard.oopcd.backend.database;
 
+import me.stageguard.oopcd.backend.ConsumerOrException;
 import me.stageguard.oopcd.backend.database.AbstractDataAccessObject.IDataAccessObjectData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,7 +18,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.function.Consumer;
 
 @SuppressWarnings({"unused", "DuplicatedCode"})
 public abstract class AbstractDataAccessObject<T extends IDataAccessObjectData> {
@@ -190,13 +190,8 @@ public abstract class AbstractDataAccessObject<T extends IDataAccessObjectData> 
             query(statement.toString(), result -> {
                 if (result.isEmpty()) return;
                 var resultSet = result.get();
-                while (true) {
-                    try {
-                        if (!resultSet.next()) break;
-                        list.add(serialize(resultSet));
-                    } catch (SQLException sqlException) {
-                        sqlException.printStackTrace();
-                    }
+                while (resultSet.next()) {
+                    list.add(serialize(resultSet));
                 }
             });
         } catch (SQLException ex) {
@@ -248,7 +243,10 @@ public abstract class AbstractDataAccessObject<T extends IDataAccessObjectData> 
         return Database.executeBlocking(statement);
     }
 
-    private void query(String statement, Consumer<Optional<ResultSet>> consumer) throws SQLException {
+    private void query(
+            String statement,
+            ConsumerOrException<Optional<ResultSet>, SQLException> consumer
+    ) throws SQLException {
         Database.queryBlocking(statement, consumer);
     }
 

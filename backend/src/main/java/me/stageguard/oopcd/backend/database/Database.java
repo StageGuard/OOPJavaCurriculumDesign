@@ -11,6 +11,7 @@ package me.stageguard.oopcd.backend.database;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
+import me.stageguard.oopcd.backend.ConsumerOrException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -18,7 +19,6 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Optional;
-import java.util.function.Consumer;
 
 @SuppressWarnings({"FieldMayBeFinal", "unused"})
 public class Database implements Runnable {
@@ -38,7 +38,7 @@ public class Database implements Runnable {
         config.setJdbcUrl("jdbc:mysql://" + builder.ip + "/" + builder.database);
         config.setDriverClassName("com.mysql.cj.jdbc.Driver");
         config.setUsername(builder.username);
-        if(builder.password != null) config.setPassword(builder.password);
+        if (builder.password != null) config.setPassword(builder.password);
         config.setMaximumPoolSize(builder.maxPoolSize == null ? 10 : builder.maxPoolSize);
         return new HikariDataSource(config);
     }
@@ -47,7 +47,10 @@ public class Database implements Runnable {
         return hikariDataSource.getConnection();
     }
 
-    public static void queryBlocking(String statement, Consumer<Optional<ResultSet>> consumer) throws SQLException {
+    public static void queryBlocking(
+            String statement,
+            ConsumerOrException<Optional<ResultSet>, SQLException> consumer
+    ) throws SQLException {
         LOGGER.info("Execute: " + statement);
         if (INSTANCE == null) {
             LOGGER.error("Database hasn't been initialized, query operation will not execute.");
