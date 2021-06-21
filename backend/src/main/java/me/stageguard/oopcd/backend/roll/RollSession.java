@@ -51,7 +51,7 @@ public class RollSession {
             nextLayer();
             return roll();
         }
-        var result = students.get(random.nextInt(students.size() - 1));
+        var result = students.get(random.nextInt(students.size()));
         if (haveRolled.contains(result)) {
             return roll();
         } else {
