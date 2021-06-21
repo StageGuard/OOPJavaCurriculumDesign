@@ -17,6 +17,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Consumer;
 
 @SuppressWarnings({"unused", "DuplicatedCode"})
 public abstract class AbstractDataAccessObject<T extends IDataAccessObjectData> {
@@ -184,22 +185,24 @@ public abstract class AbstractDataAccessObject<T extends IDataAccessObjectData> 
         statement.append("LIMIT ");
         statement.append(limit);
         statement.append(";");
-        Optional<ResultSet> result;
+        var list = new ArrayList<T>();
         try {
-            result = query(statement.toString());
-        } catch (Exception ex) {
+            query(statement.toString(), result -> {
+                if (result.isEmpty()) return;
+                var resultSet = result.get();
+                while (true) {
+                    try {
+                        if (!resultSet.next()) break;
+                        list.add(serialize(resultSet));
+                    } catch (SQLException sqlException) {
+                        sqlException.printStackTrace();
+                    }
+                }
+            });
+        } catch (SQLException ex) {
             throw new SQLException("SQL execution error in create: " + ex);
         }
-        if (result.isEmpty()) {
-            return new ArrayList<>();
-        } else {
-            var list = new ArrayList<T>();
-            var resultSet = result.get();
-            while (resultSet.next()) {
-                list.add(serialize(resultSet));
-            }
-            return list;
-        }
+        return list;
     }
 
     public int delete(ConditionFilterSAM filterSAM) throws SQLException {
@@ -245,8 +248,8 @@ public abstract class AbstractDataAccessObject<T extends IDataAccessObjectData> 
         return Database.executeBlocking(statement);
     }
 
-    private Optional<ResultSet> query(String statement) throws SQLException {
-        return Database.queryBlocking(statement);
+    private void query(String statement, Consumer<Optional<ResultSet>> consumer) throws SQLException {
+        Database.queryBlocking(statement, consumer);
     }
 
     protected abstract Class<T> typeOfT();

@@ -18,6 +18,7 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Optional;
+import java.util.function.Consumer;
 
 @SuppressWarnings({"FieldMayBeFinal", "unused"})
 public class Database implements Runnable {
@@ -46,20 +47,18 @@ public class Database implements Runnable {
         return hikariDataSource.getConnection();
     }
 
-    public static Optional<ResultSet> queryBlocking(String statement) throws SQLException {
+    public static void queryBlocking(String statement, Consumer<Optional<ResultSet>> consumer) throws SQLException {
         LOGGER.info("Execute: " + statement);
         if (INSTANCE == null) {
             LOGGER.error("Database hasn't been initialized, query operation will not execute.");
-            return Optional.empty();
+            consumer.accept(Optional.empty());
         }
-        Optional<ResultSet> result;
         try (var connection = INSTANCE.getConnection()) {
             var connectionStatement = connection.createStatement();
-            result = Optional.of(connectionStatement.executeQuery(statement));
+            consumer.accept(Optional.of(connectionStatement.executeQuery(statement)));
         } catch (SQLException ex) {
             throw new SQLException("Error occurred while querying: " + ex);
         }
-        return result;
     }
 
     public static int executeBlocking(String statement) throws SQLException {

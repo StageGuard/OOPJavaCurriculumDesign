@@ -22,6 +22,7 @@ import me.stageguard.oopcd.backend.netty.dto.response.SqlExecuteResponseDTO;
 import me.stageguard.oopcd.backend.netty.dto.response.SqlQueryResponseDTO;
 
 import java.nio.charset.StandardCharsets;
+import java.util.concurrent.atomic.AtomicReference;
 
 @Route(path = "/test/executeSQLStatement", method = RouteType.POST)
 public class TestExecuteQueryRoute implements IRouteHandler {
@@ -31,13 +32,16 @@ public class TestExecuteQueryRoute implements IRouteHandler {
         var dto = SqlStatementRequestDTO.deserialize(content);
         try {
             if (dto.expression.trim().toLowerCase().startsWith("select")) {
-                var execute = Database.queryBlocking(dto.expression);
-                if (execute.isEmpty()) {
-                    return new ResponseContentWrapper(HttpResponseStatus.NO_CONTENT, new SqlExecuteResponseDTO(-1));
-                } else {
-                    var result = execute.get();
-                    return new ResponseContentWrapper(HttpResponseStatus.OK, new SqlQueryResponseDTO(result));
-                }
+                AtomicReference<ResponseContentWrapper> queryResult = new AtomicReference<>();
+                Database.queryBlocking(dto.expression, execute -> {
+                    if (execute.isEmpty()) {
+                        queryResult.set(new ResponseContentWrapper(HttpResponseStatus.NO_CONTENT, new SqlExecuteResponseDTO(-1)));
+                    } else {
+                        var result = execute.get();
+                        queryResult.set(new ResponseContentWrapper(HttpResponseStatus.OK, new SqlQueryResponseDTO(result)));
+                    }
+                });
+                return queryResult.get();
             }
             var execute = Database.executeBlocking(dto.expression);
             return new ResponseContentWrapper(HttpResponseStatus.OK, new SqlExecuteResponseDTO(execute));
