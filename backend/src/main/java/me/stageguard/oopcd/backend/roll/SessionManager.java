@@ -1,5 +1,6 @@
 package me.stageguard.oopcd.backend.roll;
 
+import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Random;
@@ -22,7 +23,7 @@ public class SessionManager {
         );
     }
 
-    public String createNewSession() {
+    public String createNewSession() throws SQLException {
         var sessionKey = generateSessionKey(8);
         if (sessions.containsKey(sessionKey)) {
             createNewSession();

@@ -16,13 +16,15 @@ public class RollSession {
     private int currentLayer;
     private int currentLayerUnansweredCount;
     private StudentData currentStudent = null;
+    private final int totalCount;
 
-    public RollSession(Config config) {
+    public RollSession(Config config) throws SQLException {
         this.config = config;
         currentLayer = 1;
         currentLayerUnansweredCount = 0;
         random = new Random();
         haveRolled = new ArrayList<>();
+        totalCount = StudentDAO.INSTANCE.retrieve(filter -> filter).size();
     }
 
     public StudentData roll() throws SQLException {
@@ -41,14 +43,17 @@ public class RollSession {
             return roll();
         }
         //当前层数的学生总数小于指定的未答上来的最大值
-        if (students.size() < config.transferCount.get(currentLayer)) {
+        if (students.size() < config.transferCount.get(currentLayer - 1)) {
             if (currentLayerUnansweredCount == students.size()) {
                 nextLayer();
                 return roll();
             }
             //当前层数未答上来的已经达到上限
-        } else if (currentLayerUnansweredCount == config.transferCount.get(currentLayer)) {
+        } else if (currentLayerUnansweredCount == config.transferCount.get(currentLayer - 1)) {
             nextLayer();
+            return roll();
+        } else if (currentLayerUnansweredCount == totalCount) {
+            reset();
             return roll();
         }
         var result = students.get(random.nextInt(students.size()));
@@ -98,6 +103,7 @@ public class RollSession {
     private void reset() {
         currentLayerUnansweredCount = 0;
         currentLayer = 1;
+        haveRolled.clear();
     }
 
     private ArrayList<StudentData> retrieve() throws SQLException {
