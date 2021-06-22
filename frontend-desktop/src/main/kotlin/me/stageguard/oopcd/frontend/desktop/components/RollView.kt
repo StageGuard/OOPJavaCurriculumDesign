@@ -86,7 +86,7 @@ class RollView(
             ) {
                 Image(
                     painter = svgResource("setting.svg"),
-                    contentDescription = "Idea logo",
+                    contentDescription = "参数设置",
                     modifier = Modifier.fillMaxSize()
                 )
             }
