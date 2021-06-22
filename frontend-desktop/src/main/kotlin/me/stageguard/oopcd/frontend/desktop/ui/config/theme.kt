@@ -1,4 +1,4 @@
-package me.stageguard.oopcd.frontend.desktop.config
+package me.stageguard.oopcd.frontend.desktop.ui
 
 import androidx.compose.material.darkColors
 import androidx.compose.ui.graphics.Color

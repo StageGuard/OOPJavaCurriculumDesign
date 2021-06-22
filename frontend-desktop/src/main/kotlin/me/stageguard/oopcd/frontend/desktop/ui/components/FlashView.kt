@@ -1,4 +1,4 @@
-package me.stageguard.oopcd.frontend.desktop.components
+package me.stageguard.oopcd.frontend.desktop.ui.components
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Text
@@ -8,7 +8,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.arkivanov.decompose.ComponentContext
-import me.stageguard.oopcd.frontend.desktop.AbstractChildrenComponent
+import me.stageguard.oopcd.frontend.desktop.ui.AbstractChildrenComponent
 
 class FlashView(
     ctx: ComponentContext

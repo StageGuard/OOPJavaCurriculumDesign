@@ -6,7 +6,8 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.ui.Modifier
 import com.arkivanov.decompose.extensions.compose.jetbrains.rememberRootComponent
-import me.stageguard.oopcd.frontend.desktop.config.darkTheme
+import me.stageguard.oopcd.frontend.desktop.ui.NavigationHostComponent
+import me.stageguard.oopcd.frontend.desktop.ui.darkTheme
 
 fun main() = Window(
     title = "Roll System"

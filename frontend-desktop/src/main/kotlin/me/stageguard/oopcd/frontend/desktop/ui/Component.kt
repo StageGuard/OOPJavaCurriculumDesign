@@ -1,4 +1,4 @@
-package me.stageguard.oopcd.frontend.desktop
+package me.stageguard.oopcd.frontend.desktop.ui
 
 import androidx.compose.runtime.Composable
 

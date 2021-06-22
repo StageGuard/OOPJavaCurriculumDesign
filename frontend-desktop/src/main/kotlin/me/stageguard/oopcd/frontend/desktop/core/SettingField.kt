@@ -1,4 +1,4 @@
-package me.stageguard.oopcd.frontend.desktop.roll
+package me.stageguard.oopcd.frontend.desktop.core
 
 object SettingField {
     val layer: Int

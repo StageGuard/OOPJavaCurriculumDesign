@@ -1,4 +1,4 @@
-package me.stageguard.oopcd.frontend.desktop.components
+package me.stageguard.oopcd.frontend.desktop.ui.components
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -9,6 +9,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.Text
 import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -20,11 +21,12 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.arkivanov.decompose.ComponentContext
-import me.stageguard.oopcd.frontend.desktop.AbstractChildrenComponent
+import me.stageguard.oopcd.frontend.desktop.ui.AbstractChildrenComponent
 
 class RollView(
     ctx: ComponentContext
 ) : AbstractChildrenComponent(ctx) {
+    var rollSession = mutableStateOf<String?>(null)
     @Composable
     override fun render() {
         BoxWithConstraints(

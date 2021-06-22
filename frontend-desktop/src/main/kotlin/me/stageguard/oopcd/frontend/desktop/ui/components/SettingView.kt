@@ -1,7 +1,8 @@
-package me.stageguard.oopcd.frontend.desktop.components
+package me.stageguard.oopcd.frontend.desktop.ui.components
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material.Button
 import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Switch
 import androidx.compose.material.Text
@@ -14,8 +15,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.arkivanov.decompose.ComponentContext
-import me.stageguard.oopcd.frontend.desktop.AbstractChildrenComponent
-import me.stageguard.oopcd.frontend.desktop.roll.SettingField
+import me.stageguard.oopcd.frontend.desktop.core.SettingField
+import me.stageguard.oopcd.frontend.desktop.ui.AbstractChildrenComponent
 
 class SettingView(
     ctx: ComponentContext
@@ -145,6 +146,14 @@ class SettingView(
                             }
                         )
                     }
+                }
+            }
+            Box(modifier = Modifier.padding(50.dp).align(Alignment.TopEnd)) {
+                Button(
+                    modifier = Modifier.align(Alignment.TopEnd),
+                    onClick = { }
+                ) {
+                    Text("应用设置", fontSize = 15.sp)
                 }
             }
         }

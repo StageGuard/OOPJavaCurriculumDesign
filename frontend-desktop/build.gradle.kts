@@ -14,15 +14,23 @@ repositories {
 }
 
 dependencies {
-    testImplementation(kotlin("test"))
+    testImplementation(kotlin("test-junit5"))
+    testImplementation("org.junit.jupiter:junit-jupiter-api:5.7.2")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.7.2")
     implementation(compose.desktop.currentOs)
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.0")
     implementation("com.arkivanov.decompose:decompose:0.2.5")
     implementation("com.arkivanov.decompose:extensions-compose-jetbrains:0.2.5")
+    implementation("io.ktor:ktor-client-core:1.6.0")
+    implementation("io.ktor:ktor-client-okhttp:1.6.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.2.1")
 }
 
 tasks.test {
     useJUnitPlatform()
+    testLogging {
+        events("passed", "skipped", "failed")
+    }
 }
 
 tasks.withType<KotlinCompile> {
