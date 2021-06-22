@@ -15,13 +15,17 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.svgResource
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.arkivanov.decompose.ComponentContext
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import me.stageguard.oopcd.frontend.desktop.Either
 import me.stageguard.oopcd.frontend.desktop.core.RollManager
@@ -37,6 +41,8 @@ class RollView(
     private var students = listOf<StudentInfoDTO>()
     private var rolledStudent by mutableStateOf<StudentInfoDTO?>(null)
     private var rolled by mutableStateOf(false)
+    private var isRollClickable by mutableStateOf(true)
+    private var isAnswerClickable by mutableStateOf(false)
 
     private var errorMessage by mutableStateOf("")
 
@@ -52,7 +58,17 @@ class RollView(
             ) {
                 Spacer(modifier = Modifier.height(100.dp))
                 Text(
-                    text = "姓名：${rolledStudent?.name ?: ""}",
+                    text = buildAnnotatedString {
+                        append("姓名：")
+                        withStyle(
+                            style = SpanStyle(
+                                fontWeight = FontWeight.Normal,
+                                fontSize = 35.sp
+                            )
+                        ) {
+                            append(rolledStudent?.name ?: "")
+                        }
+                    },
                     fontSize = 40.sp,
                     fontWeight = FontWeight.Bold,
                     textAlign = TextAlign.Left,
@@ -62,7 +78,17 @@ class RollView(
                 Spacer(modifier = Modifier.height(10.dp))
 
                 Text(
-                    text = "学号：${rolledStudent?.id ?: ""}",
+                    text = buildAnnotatedString {
+                        append("学号：")
+                        withStyle(
+                            style = SpanStyle(
+                                fontWeight = FontWeight.Normal,
+                                fontSize = 35.sp
+                            )
+                        ) {
+                            append(if (rolledStudent?.id == null) "" else rolledStudent?.id.toString())
+                        }
+                    },
                     fontSize = 40.sp,
                     fontWeight = FontWeight.Bold,
                     textAlign = TextAlign.Left,
@@ -76,7 +102,7 @@ class RollView(
                 ) {
                     Button(
                         onClick = { answer(isRight = false) },
-                        enabled = rolled
+                        enabled = isAnswerClickable
                     ) {
                         Text(
                             text = "错误",
@@ -90,7 +116,7 @@ class RollView(
                         modifier = Modifier.clickable(
                             interactionSource = remember { MutableInteractionSource() },
                             indication = rememberRipple(bounded = false, radius = 80.dp),
-                            onClick = ::startRoll, enabled = !rolled
+                            onClick = ::startRoll, enabled = isRollClickable
                         ).background(
                             Brush.linearGradient(
                                 0.0f to Color(21, 153, 87),
@@ -101,13 +127,14 @@ class RollView(
                         Text(
                             text = "点名",
                             fontSize = 40.sp,
-                            textAlign = TextAlign.Center
+                            textAlign = TextAlign.Center,
+                            fontWeight = FontWeight.Bold
                         )
                     }
                     Spacer(modifier = Modifier.width(50.dp))
                     Button(
                         onClick = { answer(isRight = true) },
-                        enabled = rolled
+                        enabled = isAnswerClickable
                     ) {
                         Text(
                             text = "正确",
@@ -143,6 +170,7 @@ class RollView(
     private fun startRoll() {
         GlobalScope.launch {
             if (rollSession == null) {
+                isRollClickable = false
                 when (val rollSessionDTO = RollManager.createRollSession()) {
                     is Either.Left -> rollSession = rollSessionDTO.value.sessionKey
                     is Either.Right -> {
@@ -161,7 +189,7 @@ class RollView(
                 }
             }
             when (val rollDTO = RollManager.roll(sessionKey = rollSession!!)) {
-                is Either.Left -> rolledStudent = rollDTO.value.student.also { println(it) }
+                is Either.Left -> rolledStudent = rollDTO.value.student
                 is Either.Right -> {
                     errorMessage = rollDTO.value.error
                     clearStatus(true)
@@ -198,10 +226,22 @@ class RollView(
         rolledStudent = null
         if (clearRollSession) rollSession = null
         students = listOf()
+        isRollClickable = true
+        isAnswerClickable = false
     }
 
     private suspend fun rollAnimation() {
-        rolled = true
         errorMessage = ""
+        isRollClickable = false
+        var delayTime = 25
+        var rollTimes = 35
+        val targetStudent = rolledStudent!!.copy()
+        while (rollTimes-- > 0) {
+            rolledStudent = students.random()
+            delay(delayTime.toLong())
+            delayTime += 5
+        }
+        rolledStudent = targetStudent
+        isAnswerClickable = true
     }
 }
