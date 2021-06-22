@@ -16,6 +16,10 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.arkivanov.decompose.ComponentContext
+import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import me.stageguard.oopcd.frontend.desktop.core.SettingField
 import me.stageguard.oopcd.frontend.desktop.ui.AbstractChildrenComponent
 
@@ -171,6 +175,7 @@ class SettingView(
         }
     }
 
+    @OptIn(DelicateCoroutinesApi::class)
     private fun checkAndApplySettings() {
         val illegalArguments = mutableListOf<String>()
         if (!settings.layerStatus) illegalArguments.add("分层层数")
@@ -185,6 +190,10 @@ class SettingView(
         SettingField.transferCount = settings.transferCount.split(",").map { it.toInt() }
         SettingField.rollAlsoFromNextLayer = settings.rollAlsoFromNextLayer
         applyState = "应用成功"
+        GlobalScope.launch {
+            delay(3000L)
+            applyState = ""
+        }
     }
 
     private data class SettingFieldInComposeField(

@@ -4,5 +4,5 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class GetStudentsResponseDTO(
-    val students: List<RollResponseDTO>
+    val students: List<StudentInfoDTO>
 )

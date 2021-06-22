@@ -27,9 +27,9 @@ object RollManager {
     @Suppress("RemoveExplicitTypeArguments")
     suspend fun getStudents(
         limit: Int = 1000,
-        filter: List<GetStudentsRequestFilterDTO>
+        filter: List<GetStudentsRequestFilterDTO>? = null
     ): Either<GetStudentsResponseDTO, ErrorResponseDTO> = try {
-        if (filter.isEmpty()) {
+        if (filter == null || filter.isEmpty()) {
             client.get<HttpStatement> {
                 url("$BASE_URL/v1/getStudents?limit=$limit")
                 header("Authorization", AUTH_KEY)
