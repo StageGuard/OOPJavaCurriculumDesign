@@ -11,17 +11,26 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.arkivanov.decompose.ComponentContext
-import kotlinx.coroutines.DelicateCoroutinesApi
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
+import me.stageguard.oopcd.frontend.desktop.Either
+import me.stageguard.oopcd.frontend.desktop.core.RandomChineseNameGenerator
+import me.stageguard.oopcd.frontend.desktop.core.RollManager
 import me.stageguard.oopcd.frontend.desktop.core.SettingField
+import me.stageguard.oopcd.frontend.desktop.core.dto.request.ImportStudentDTO
+import me.stageguard.oopcd.frontend.desktop.core.dto.request.ImportStudentsDTO
 import me.stageguard.oopcd.frontend.desktop.ui.AbstractChildrenComponent
+import java.io.File
+import java.nio.charset.Charset
+import java.text.DecimalFormat
+import javax.swing.JFileChooser
+import javax.swing.filechooser.FileSystemView
+
 
 class SettingView(
     ctx: ComponentContext,
@@ -164,6 +173,20 @@ class SettingView(
                 }
                 Spacer(Modifier.height(15.dp))
                 Button(
+                    onClick = ::generateRandomDataAndImport,
+                    modifier = Modifier.align(Alignment.End)
+                ) {
+                    Text("批量新建", fontSize = 18.sp)
+                }
+                Spacer(Modifier.height(15.dp))
+                Button(
+                    onClick = ::exportData,
+                    modifier = Modifier.align(Alignment.End)
+                ) {
+                    Text("导出数据", fontSize = 18.sp)
+                }
+                Spacer(Modifier.height(15.dp))
+                Button(
                     onClick = onBackPressed,
                     modifier = Modifier.align(Alignment.End)
                 ) {
@@ -194,6 +217,71 @@ class SettingView(
             delay(3000L)
             applyState = ""
         }
+    }
+
+    @OptIn(DelicateCoroutinesApi::class)
+    private fun generateRandomDataAndImport() {
+        GlobalScope.launch {
+            val students = mutableListOf<ImportStudentDTO>()
+            for (a in 1..100) {
+                students.add(
+                    ImportStudentDTO(
+                        name = RandomChineseNameGenerator.generateName(),
+                        id = RandomChineseNameGenerator.random.nextLong(202003000000, 202003099999),
+                        clazz = "20-" + RandomChineseNameGenerator.random.nextInt(5)
+                    )
+                )
+            }
+            applyState = when (RollManager.importStudents(ImportStudentsDTO(students))) {
+                is Either.Left -> "导入成功"
+                is Either.Right -> "导入失败"
+            }
+            delay(3000L)
+            applyState = ""
+        }
+    }
+
+    @OptIn(DelicateCoroutinesApi::class, ExperimentalComposeUiApi::class)
+    private fun exportData() {
+        GlobalScope.launch {
+            when (val data = RollManager.getStudents()) {
+                is Either.Left -> {
+                    val dialog = openFileChooser()
+                    val result = dialog.showOpenDialog(dialog)
+                    if (result == JFileChooser.APPROVE_OPTION) {
+                        val filePath: String = dialog.selectedFile.absolutePath
+                        val file = File(filePath + File.separator + "export.txt")
+                        with(Dispatchers.IO) {
+                            file.delete()
+                            file.createNewFile()
+                            file.appendText(buildString {
+                                append("学号\t\t班级\t\t姓名\t\t总回答数\t\t正确回答数\t\t正确率\n")
+                                val decimalFormat = DecimalFormat("#######0.00")
+                                data.value.students.joinToString("\n") {
+                                    "${it.id}\t\t${it.clazz}\t\t${it.name}\t\t${it.totalAnswered}\t\t${it.rightAnswered}\t\t${
+                                        if (it.totalAnswered == 0) 0 else decimalFormat.format(it.rightAnswered.toFloat() / it.totalAnswered.toFloat())
+                                    }"
+                                }.also { append(it) }
+                            }, Charset.forName("UTF-8"))
+                            applyState = "成功导出到 $file"
+                        }
+
+                    }
+                }
+                is Either.Right -> {
+                    applyState = "导出失败：" + data.value.error
+                }
+            }
+            delay(3000L)
+            applyState = ""
+        }
+    }
+
+    private fun openFileChooser() = JFileChooser().apply {
+        fileSelectionMode = JFileChooser.DIRECTORIES_ONLY
+        currentDirectory = FileSystemView.getFileSystemView().homeDirectory
+        dialogTitle = "导出至..."
+        approveButtonText = "导出"
     }
 
     private data class SettingFieldInComposeField(

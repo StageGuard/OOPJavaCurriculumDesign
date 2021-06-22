@@ -12,6 +12,7 @@ import kotlinx.serialization.json.Json
 import me.stageguard.oopcd.frontend.desktop.Either
 import me.stageguard.oopcd.frontend.desktop.core.dto.request.CreateRollSessionRequestDTO
 import me.stageguard.oopcd.frontend.desktop.core.dto.request.GetStudentsRequestFilterDTO
+import me.stageguard.oopcd.frontend.desktop.core.dto.request.ImportStudentsDTO
 import me.stageguard.oopcd.frontend.desktop.core.dto.request.SettingFieldDTO
 import me.stageguard.oopcd.frontend.desktop.core.dto.response.*
 import java.util.regex.Pattern
@@ -129,6 +130,34 @@ object RollManager {
                 Either.Right(json.decodeFromString(result))
             } else {
                 Either.Left(json.decodeFromString(result))
+            }
+        }
+    } catch (ex: Exception) {
+        Either.Right(ErrorResponseDTO(ex.toString()))
+    }
+
+    suspend fun importStudents(
+        data: ImportStudentsDTO
+    ): Either<AnswerResponseDTO, ErrorResponseDTO> = try {
+        client.post<HttpStatement> {
+            url("$BASE_URL/v1/importStudents")
+            header("Authorization", AUTH_KEY)
+            contentType(ContentType.Application.Json)
+            body = json.encodeToString(data)
+        }.execute { response ->
+            val result = response.content.readUTF8Line() ?: """
+                {"error": "Empty content."}
+            """.trimIndent()
+            if (Pattern.compile("error").matcher(result).find()) {
+                Either.Right(json.decodeFromString(result))
+            } else {
+                Either.Left(
+                    json.decodeFromString(
+                        """
+                    {"result": "ok"}
+                """.trimIndent()
+                    )
+                )
             }
         }
     } catch (ex: Exception) {
