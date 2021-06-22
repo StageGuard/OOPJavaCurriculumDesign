@@ -6,6 +6,7 @@ plugins {
     kotlin("jvm")
     id("org.jetbrains.compose") version "0.4.0"
     kotlin("plugin.serialization") version "1.5.0"
+    id("com.github.johnrengelman.shadow") version "7.0.0"
 }
 
 
@@ -45,5 +46,11 @@ compose.desktop {
             packageName = "OOPCDFrontendDesktop"
             packageVersion = "1.0.0"
         }
+    }
+}
+
+tasks.withType<com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar> {
+    manifest {
+        attributes["Main-Class"] = "me.stageguard.oopcd.frontend.desktop.DesktopMainKt"
     }
 }
