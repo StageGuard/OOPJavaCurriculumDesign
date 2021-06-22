@@ -9,6 +9,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.Text
 import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -21,12 +22,18 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.arkivanov.decompose.ComponentContext
+import me.stageguard.oopcd.frontend.desktop.core.dto.response.StudentInfoDTO
 import me.stageguard.oopcd.frontend.desktop.ui.AbstractChildrenComponent
 
 class RollView(
-    ctx: ComponentContext
+    ctx: ComponentContext,
+    val onSettingButtonPressed: () -> Unit
 ) : AbstractChildrenComponent(ctx) {
+
     var rollSession = mutableStateOf<String?>(null)
+    var students = mutableStateListOf<StudentInfoDTO?>()
+    var rolledStudent = mutableStateOf<StudentInfoDTO?>(null)
+
     @Composable
     override fun render() {
         BoxWithConstraints(
@@ -83,7 +90,7 @@ class RollView(
                 modifier = Modifier.clickable(
                     interactionSource = remember { MutableInteractionSource() },
                     indication = rememberRipple(bounded = false, radius = 25.dp),
-                    onClick = {}
+                    onClick = onSettingButtonPressed
                 ).size(30.dp).align(Alignment.BottomEnd),
             ) {
                 Image(

@@ -1,12 +1,8 @@
 package me.stageguard.oopcd.frontend.desktop.core
 
 object SettingField {
-    val layer: Int
-        get() = 4
-    val ratio: List<Double>
-        get() = mutableListOf(0.0, 0.2, 0.5, 0.7)
-    val transferCount: List<Int>
-        get() = mutableListOf(5, 4, 3, 3)
-    val rollAlsoFromNextLayer: Boolean
-        get() = false
+    var layer: Int = 4
+    var ratio: List<Double> = mutableListOf(0.0, 0.2, 0.5, 0.7)
+    var transferCount: List<Int> = mutableListOf(5, 4, 3, 3)
+    var rollAlsoFromNextLayer: Boolean = false
 }
