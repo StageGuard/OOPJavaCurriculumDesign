@@ -7,14 +7,14 @@ import androidx.compose.material.Surface
 import androidx.compose.material.Typography
 import androidx.compose.ui.Modifier
 import com.arkivanov.decompose.extensions.compose.jetbrains.rememberRootComponent
+import me.stageguard.oopcd.frontend.desktop.config.darkTheme
 import me.stageguard.oopcd.frontend.desktop.config.fontFamily
-import me.stageguard.oopcd.frontend.desktop.config.lightTheme
 
 fun main() = Window(
     title = "Roll System"
 ) {
     MaterialTheme(
-        colors = lightTheme,
+        colors = darkTheme,
         typography = Typography(defaultFontFamily = fontFamily)
     ) {
         Surface(modifier = Modifier.fillMaxSize()) {

@@ -27,7 +27,7 @@ public class ApplicationMain {
     private static final ExecutorService executors = Executors.newCachedThreadPool();
 
     public static void main(String[] args) {
-        var nettyHttpService = NettyHttpServerBuilder.create(8081)
+        var nettyHttpService = NettyHttpServerBuilder.create(8088)
                 .route(new ArrayList<>(Arrays.asList(
                         new TestExecuteQueryRoute(),
                         new ImportSingleStudentRoute(),
@@ -37,7 +37,7 @@ public class ApplicationMain {
                         new RollRoute(),
                         new AnswerRoute()
                 )))
-                .authKey("114514")
+                .authKey("114514_1919810")
                 .build();
         executors.execute(nettyHttpService);
         var databaseService = DatabaseBuilder.create("localhost", 3306)
