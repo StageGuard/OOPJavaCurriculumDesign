@@ -5,6 +5,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 plugins {
     kotlin("jvm")
     id("org.jetbrains.compose") version "0.4.0"
+    kotlin("plugin.serialization") version "1.5.0"
 }
 
 
@@ -15,7 +16,7 @@ repositories {
 dependencies {
     testImplementation(kotlin("test"))
     implementation(compose.desktop.currentOs)
-    // Decompose : Decompose
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.0")
     implementation("com.arkivanov.decompose:decompose:0.2.5")
     implementation("com.arkivanov.decompose:extensions-compose-jetbrains:0.2.5")
 }
