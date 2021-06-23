@@ -6,7 +6,7 @@ A simple roll-call system with saved state which can be used in class.
 
 More details can be found in [my blog](https://stageguard.top/OOPJavaCurriculumDesign/).
 
-### STRUCTURE
+### Project Structure
 
 - **Database**: Data container where stores student data, now only supports **MariaDB**.
 - [**Backend**](backend): The bridge between database and frontend, handle core functions like <br>access database and
@@ -17,57 +17,49 @@ More details can be found in [my blog](https://stageguard.top/OOPJavaCurriculumD
 
 [![](https://mermaid.ink/img/eyJjb2RlIjoiZ3JhcGggTFJcbiAgICBiYWNrZW5kKEJhY2tlbmQpXG4gICAgZnJvbnRlbmRhbmRyb2lkKFwiRnJvbnRlbmQ6IEFuZHJvaWRcIilcbiAgICBmcm9udGVuZHdlYihcIkZyb250ZW5kOiBXZWJcIilcbiAgICBmcm9udGVuZGRlc2t0b3AoXCJGcm9udGVuZDogRGVza3RvcFwiKVxuICAgIGRhdGFiYXNlKFwiRGF0YWJhc2VcIilcbiAgICBkYXRhYmFzZSAtLT4gfGFjY2Vzc3xiYWNrZW5kXG4gICAgYmFja2VuZCAtLT4gfEhUVFAgQVBJfGZyb250ZW5kd2ViXG4gICAgYmFja2VuZCAtLT4gfEhUVFAgQVBJfGZyb250ZW5kYW5kcm9pZFxuICAgIGJhY2tlbmQgLS0-IHxIVFRQIEFQSXxmcm9udGVuZGRlc2t0b3AiLCJtZXJtYWlkIjp7InRoZW1lIjoiZGVmYXVsdCJ9LCJ1cGRhdGVFZGl0b3IiOmZhbHNlLCJhdXRvU3luYyI6dHJ1ZSwidXBkYXRlRGlhZ3JhbSI6ZmFsc2V9)](https://mermaid-js.github.io/mermaid-live-editor/edit/##eyJjb2RlIjoiZ3JhcGggTFJcbiAgICBiYWNrZW5kKEJhY2tlbmQpXG4gICAgZnJvbnRlbmRhbmRyb2lkKFwiRnJvbnRlbmQ6IEFuZHJvaWRcIilcbiAgICBmcm9udGVuZHdlYihcIkZyb250ZW5kOiBXZWJcIilcbiAgICBmcm9udGVuZGRlc2t0b3AoXCJGcm9udGVuZDogRGVza3RvcFwiKVxuICAgIGRhdGFiYXNlKFwiRGF0YWJhc2VcIilcbiAgICBkYXRhYmFzZSAtLT4gfGFjY2Vzc3xiYWNrZW5kXG4gICAgYmFja2VuZCAtLT4gfEhUVFAgQVBJfGZyb250ZW5kd2ViXG4gICAgYmFja2VuZCAtLT4gfEhUVFAgQVBJfGZyb250ZW5kYW5kcm9pZFxuICAgIGJhY2tlbmQgLS0-IHxIVFRQIEFQSXxmcm9udGVuZGFuZHJvaWQiLCJtZXJtYWlkIjoie1xuICBcInRoZW1lXCI6IFwiZGVmYXVsdFwiXG59IiwidXBkYXRlRWRpdG9yIjpmYWxzZSwiYXV0b1N5bmMiOnRydWUsInVwZGF0ZURpYWdyYW0iOmZhbHNlfQ)
 
-### DEPLOY
+### Deploy
+
+1. Download the prebuilt executable files
+   in [releases page](https://github.com/StageGuard/OOPJavaCurriculumDesign/releases) or [build manually](#BUILD) on
+   your own.
+
+2. Set property via JVM property.
+
+   **For backend:**
+
+    - `sg.oopcd.backend.server.port` : http server port. (default: `8081`)
+    - `sg.oopcd.backend.server.authKey` : auth key. (default: `114514_1919810`)
+    - `sg.oopcd.backend.database.address` : database address. (default: `localhost`)
+    - `sg.oopcd.backend.database.port` : database port. (default: `3306`)
+    - `sg.oopcd.backend.database.username` : database username to connect. (default: `root`)
+    - `sg.oopcd.backend.database.password` : the user's password. (default: `testpwd`)
+    - `sg.oopcd.backend.database.table` : database table that backend access.(default: `oopcd_database`)
+
+   **For frontend-desktop:**
+
+    - `sg.oopcd.frontend.desktop.server.address` : http server address. (default: `localhost`)
+    - `sg.oopcd.frontend.desktop.server.port` : http server port, must be same with `sg.oopcd.backend.server.port`. (
+      default: `8081`)
+    - `sg.oopcd.frontend.desktop.authKey` : auth key, must be same with `sg.oopcd.backend.server.authKey`. (
+      default: `114514_1919810`)
+
+3. Execute jars with your custom property.
+
+```bash
+java -Dsg.oopcd.backend.server.port=11451 -D... -jar backend-x.x-all.jar # run backend service
+java -Dsg.oopcd.frontend.desktop.server.port=11451 -D... -jar OOPCDFrontendDesktop-platform-arch-x.x.x.jar # run frontend application
+```
+
+### Build
 
 1. Clone this repository using [IntelliJ IDEA](https://www.jetbrains.com/idea/).
-2. Change default property
-   at [ApplicationMain.java](backend/src/main/java/me/stageguard/oopcd/backend/ApplicationMain.java) in backend
-   and [RollManager.kt](frontend-desktop/src/main/kotlin/me/stageguard/oopcd/frontend/desktop/core/RollManager.kt) in
-   frontend-desktop.
-
-```java
-//ApplicationMain.java
-public class ApplicationMain {
-    public static void main() {
-        var nettyHttpService = NettyHttpServerBuilder
-                .create(8088) // http server port
-                .route(/* ... */)
-                .authKey("114514_1919810") // authentication key that required in http headers.
-                .build();
-        var databaseService = DatabaseBuilder
-                .create("localhost", 3306) // address and port of MariaDB Databaes
-                .username("root") // username
-                .password("testpwd") // password
-                .database("oopcd_database") // database table
-                .build();
-    }
-}
-```
-
-```kotlin
-object RollManager {
-    private const val AUTH_KEY = "114514_1919810" // authentication key that similar to .authkey()
-    private const val BASE_URL = "http://localhost:8088" // address of http server
-    /* ... */
-}
-```
-
-3. Run Gradle task `backend:shadowJar` and `frontend-desktop:packageUberJarForCurrentOS`(
+2. Run Gradle task `backend:shadowJar` and `frontend-desktop:packageUberJarForCurrentOS`(
    or `frontend-desktop:createDistributable`).<br>The shadowed jar file can be found
    in `backend/build/libs/backend-x.x-all.jar`
    and `frontend-desktop/build/compose/jars/OOPCDFrontendDesktop-platform-arch-x.x.x.jar`(
    or `frontend-desktop/build/compose/binaries/main/app/OOPCDFrontendDesktop` if you runs `createDistributable`).
 
-4. Execute these jars (or just run exe if you runs `createDistributable`).
-
-```bash
-java -jar backend-x.x-all.jar # run backend service
-java -jar OOPCDFrontendDesktop-platform-arch-x.x.x.jar # run frontend application
-```
-
-> If you don't want to change these default config and build jars manually, you can simplify download the jars in [releases page](https://github.com/StageGuard/OOPJavaCurriculumDesign/releases).
-
-### LIBRARY
+### Library
 
 - [netty](https://github.com/netty/netty) - An asynchronous event-driven network application framework for rapid
   development of maintainable high performance protocol servers & clients.
@@ -86,7 +78,7 @@ java -jar OOPCDFrontendDesktop-platform-arch-x.x.x.jar # run frontend applicatio
 - [kotlinx.coroutines](https://github.com/Kotlin/kotlinx.coroutines) - Library support for Kotlin coroutines
   with [multiplatform](https://github.com/Kotlin/kotlinx.coroutines#multiplatform) support.
 
-### THANKS TO
+### Thanks to
 
 Thanks [JetBrains](https://www.jetbrains.com/?from=stageguard-oopcd) for providing free license
 for [IntelliJ IDEA](https://www.jetbrains.com/idea/?from=stageguard-oopcd) and other IDEs for open source project.
