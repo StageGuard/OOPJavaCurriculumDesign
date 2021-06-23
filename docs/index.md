@@ -35,6 +35,21 @@
 - 拥有优美的 UI 界面，遵守 `Material Design` 设计规则。
 - ......
 
+#### 前端截图：
+
+- Frontend: Desktop
+
+<table>
+<tr>
+    <td align="center" height="200">
+        <img src="article/image/1.webp" />
+    </td>
+    <td align="center" height="200">
+        <img src="article/image/2.webp" />
+    </td>
+</tr>
+</table>
+
 ### 开发过程：
 
 1. [初始化项目，配置 `gradle` 子项目](article/01-init-project-and-configure-gradle.md)
