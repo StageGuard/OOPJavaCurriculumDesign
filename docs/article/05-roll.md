@@ -211,3 +211,4 @@ public class SessionManager {
 
 前端请求创建 `RollSession`，`SessionManager` 会负责创建并返回一个随机会话密钥绑定到这个 RollSession 上，当其前端需要执行 `roll` 和 `answer`操作时就需要带上密钥来指定操作哪个会话。
 
+> 返回主页：[OOPJavaCurriculumDesign](../index.md)

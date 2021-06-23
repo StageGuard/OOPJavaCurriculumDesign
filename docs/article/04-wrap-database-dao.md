@@ -309,5 +309,7 @@ public class RollSession() {
 `currentStudent` 是一个 `StudentData`，得益于`AbstractDataAccessObjectData`
 的状态记录功能，在更改他的属性值后直接调用 `StudentDAO.INSTANCE.update(currentStudent);` 即可更新数据。
 
+> 返回主页：[OOPJavaCurriculumDesign](../index.md)
+>
 > 下一篇：[Backend: 基于状态点名实现](05-roll.md)
 

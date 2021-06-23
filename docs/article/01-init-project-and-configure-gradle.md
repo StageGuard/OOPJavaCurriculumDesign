@@ -11,6 +11,9 @@ OOPJavaCurriculumDesign
 │   ├─── src
 │   └─── ...
 ├─── frontend-web  <---- Web 前端实现。
+├─── frontend-desktop  <---- 桌面前端实现。
+│   ├─── src
+│   └─── ...
 ├─── docs  <---- 开发博客。
 └─── ...
 ```
@@ -61,4 +64,6 @@ include ':frontend-android'
 
 使用 `include` 导入子项目。
 
+> 返回主页：[OOPJavaCurriculumDesign](../index.md)
+>
 > 下一篇：[Backend: 构建 Netty HTTP API 服务，封装](02-build-netty-http-api.md)

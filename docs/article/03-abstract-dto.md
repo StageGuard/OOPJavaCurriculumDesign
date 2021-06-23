@@ -96,4 +96,6 @@ public class AnswerRoute implements IRouteHandler {
 }
 ```
 
+> 返回主页：[OOPJavaCurriculumDesign](../index.md)
+>
 > 下一篇：[Backend: 封装数据库 DAO 模式](04-wrap-database-dao.md)
