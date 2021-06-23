@@ -1,12 +1,15 @@
+import org.gradle.jvm.tasks.Jar
 import org.jetbrains.compose.compose
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import java.io.PrintWriter
+import java.io.StringWriter
+import java.util.spi.ToolProvider
 
 plugins {
     kotlin("jvm")
     id("org.jetbrains.compose") version "0.4.0"
     kotlin("plugin.serialization") version "1.5.0"
-    id("com.github.johnrengelman.shadow") version "7.0.0"
 }
 
 
@@ -36,21 +39,39 @@ tasks.test {
 
 tasks.withType<KotlinCompile> {
     kotlinOptions.jvmTarget = "11"
+    kotlinOptions.freeCompilerArgs.apply {
+        plus("-Xopt-in=kotlin.RequiresOptIn")
+        plus("--add-modules")
+        plus("java.instrument")
+        plus("--add-modules")
+        plus("jdk.unsupported")
+    }
 }
 
 compose.desktop {
     application {
         mainClass = "me.stageguard.oopcd.frontend.desktop.DesktopMainKt"
         nativeDistributions {
-            targetFormats(TargetFormat.Msi)
+            targetFormats(TargetFormat.Exe, TargetFormat.Dmg)
             packageName = "OOPCDFrontendDesktop"
             packageVersion = "1.0.0"
         }
     }
 }
 
-tasks.withType<com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar> {
-    manifest {
-        attributes["Main-Class"] = "me.stageguard.oopcd.frontend.desktop.DesktopMainKt"
+val printModuleDeps by tasks.creating {
+    doLast {
+        val uberJar = tasks.named("packageUberJarForCurrentOS", Jar::class)
+        val jarFile = uberJar.get().archiveFile.get().asFile
+
+        val jdeps = ToolProvider.findFirst("jdeps").orElseGet { error("Can't find jdeps tool in JDK") }
+        val out = StringWriter()
+        val pw = PrintWriter(out)
+        jdeps.run(pw, pw, "--print-module-deps", "--ignore-missing-deps", jarFile.absolutePath)
+
+        val modules = out.toString()
+        println(modules)
+        // compose.desktop.application.nativeDistributions.modules.addAll(modules.split(","))
     }
+    dependsOn("packageUberJarForCurrentOS")
 }
