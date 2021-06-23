@@ -19,12 +19,12 @@
 
 1. 有批量导入学生功能，需要大量存储数据，使用 `MySQL` 作为数据存储后端。
 2. 设计后台，提供给前端 `Web(HTTP) API`。
-   - 后端使用 `Java` 语言作为主语言编写。
-   - 使用 `Netty` 作为服务器框架，使用 `JDBC`(`HikariCP` for connection pool) 与数据库连接。
-   - 后端为前端提供 `HTTP API` 用于与后端交互。
-3. 前端分为 `Web 前端` 和 `Android 移动前端` ，他们通过 `HTTP API` 与后端服务器交互。
-   - 使用基于 `Kotlin` 语言的 `compose-jb` 作为 UI 框架。
-   - 使用 `ktor` 作为 HTTP Client 框架。
+    - 后端使用 `Java` 语言作为主语言编写。
+    - 使用 `Netty` 作为服务器框架，使用 `JDBC`(`HikariCP` for connection pool) 与数据库连接。
+    - 后端为前端提供 `HTTP API` 用于与后端交互。
+3. 前端分为 `Web 前端`, `Android 移动前端` 和 `Desktop 桌面前端` ，他们通过 `HTTP API` 与后端服务器交互。
+    - 使用基于 `Kotlin` 语言的 `compose-jb` 作为 UI 框架。
+    - 使用 `ktor` 作为 HTTP Client 框架。
 
 [![](https://mermaid.ink/img/eyJjb2RlIjoiZ3JhcGggTFJcbiAgICBiYWNrZW5kKEJhY2tlbmQpXG4gICAgZnJvbnRlbmRhbmRyb2lkKFwiRnJvbnRlbmQ6IEFuZHJvaWRcIilcbiAgICBmcm9udGVuZHdlYihcIkZyb250ZW5kOiBXZWJcIilcbiAgICBkYXRhYmFzZShcIkRhdGFiYXNlXCIpXG4gICAgZGF0YWJhc2UgLS0tIHxhY2Nlc3N8YmFja2VuZFxuICAgIGJhY2tlbmQgLS0-IHxIVFRQIEFQSXxmcm9udGVuZHdlYlxuICAgIGJhY2tlbmQgLS0-IHxIVFRQIEFQSXxmcm9udGVuZGFuZHJvaWQiLCJtZXJtYWlkIjp7InRoZW1lIjoiZGVmYXVsdCJ9LCJ1cGRhdGVFZGl0b3IiOmZhbHNlLCJhdXRvU3luYyI6dHJ1ZSwidXBkYXRlRGlhZ3JhbSI6ZmFsc2V9)](https://mermaid-js.github.io/mermaid-live-editor/edit##eyJjb2RlIjoiZ3JhcGggTFJcbiAgICBiYWNrZW5kKEJhY2tlbmQpXG4gICAgZnJvbnRlbmRhbmRyb2lkKFwiRnJvbnRlbmQ6IEFuZHJvaWRcIilcbiAgICBmcm9udGVuZHdlYihcIkZyb250ZW5kOiBXZWJcIilcbiAgICBkYXRhYmFzZShcIkRhdGFiYXNlXCIpXG4gICAgZGF0YWJhc2UgLS0-IHxhY2Nlc3N8YmFja2VuZFxuICAgIGJhY2tlbmQgLS0-IHxIVFRQIEFQSXxmcm9udGVuZHdlYlxuICAgIGJhY2tlbmQgLS0-IHxIVFRQIEFQSXxmcm9udGVuZGFuZHJvaWQiLCJtZXJtYWlkIjoie1xuICBcInRoZW1lXCI6IFwiZGVmYXVsdFwiXG59IiwidXBkYXRlRWRpdG9yIjpmYWxzZSwiYXV0b1N5bmMiOnRydWUsInVwZGF0ZURpYWdyYW0iOmZhbHNlfQ)
 
@@ -39,4 +39,12 @@
 
 1. [初始化项目，配置 `gradle` 子项目](article/01-init-project-and-configure-gradle.md)
 
-2. [Backend: 构建 Netty HTTP API 服务，封装。](article/02-build-netty-http-api.md)
+2. [Backend: 构建 Netty HTTP API 服务，封装](article/02-build-netty-http-api.md)
+
+3. [Backend: 抽象简化 HTTP 请求和回应](article/03-abstract-dto.md)
+
+4. [Backend: 封装数据库 DAO 模式](article/04-wrap-database-dao.md)
+
+5. [Backend: 基于状态点名实现](article/05-roll.md)
+
+   

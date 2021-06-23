@@ -160,3 +160,6 @@ public class TestHandler implements IRouteHandler {
 ![test-post](image/test-post.webp)
 
 ![test-notfound](image/test-notfound.webp)
+
+> 下一篇：[Backend: 抽象简化 HTTP 请求和回应](03-abstract-dto.md)
+
