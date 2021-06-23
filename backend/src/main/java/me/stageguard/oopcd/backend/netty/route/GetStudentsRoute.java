@@ -85,6 +85,8 @@ public class GetStudentsRoute implements IRouteHandler {
                                     filter.and(Condition.greaterEq(value.getFirst(), value.getSecond()));
                                 }
                                 break;
+                            default:
+                                break;
                         }
                     });
                     return filter;

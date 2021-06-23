@@ -31,14 +31,14 @@ public class HttpAuthorizeHandler extends SimpleChannelInboundHandler<FullHttpRe
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, FullHttpRequest msg) {
-        if(mAuthKey != null) {
+        if (mAuthKey != null) {
             var authorization = msg.headers().getAsString("Authorization");
-            if(authorization == null) {
+            if (authorization == null) {
                 ctx.writeAndFlush(unauthorized("Missing header \"Authorization\", please check your headers."));
                 ctx.close();
                 return;
             }
-            if(!authorization.equals(mAuthKey)) {
+            if (!authorization.equals(mAuthKey)) {
                 ctx.writeAndFlush(unauthorized("Authorize failed, please check your headers."));
                 ctx.close();
                 return;
@@ -66,7 +66,11 @@ public class HttpAuthorizeHandler extends SimpleChannelInboundHandler<FullHttpRe
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
         LOGGER.info("exceptionCaught in HttpAuthorizeHandler");
-        if(null != cause) cause.printStackTrace();
-        if(null != ctx) ctx.close();
+        if (null != cause) {
+            cause.printStackTrace();
+        }
+        if (null != ctx) {
+            ctx.close();
+        }
     }
 }

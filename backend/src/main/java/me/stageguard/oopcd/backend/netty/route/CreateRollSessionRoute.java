@@ -20,7 +20,9 @@ public class CreateRollSessionRoute implements IRouteHandler {
         var content = request.content().toString(StandardCharsets.UTF_8);
         var config = CreateRollSessionRequestDTO.deserialize(content);
         try {
-            if (config.config != null) SessionManager.INSTANCE.setDefaultConfig(config.config);
+            if (config.config != null) {
+                SessionManager.INSTANCE.setDefaultConfig(config.config);
+            }
             return new ResponseContentWrapper(
                     HttpResponseStatus.OK,
                     new CreateRollSessionResponseDTO(SessionManager.INSTANCE.createNewSession())

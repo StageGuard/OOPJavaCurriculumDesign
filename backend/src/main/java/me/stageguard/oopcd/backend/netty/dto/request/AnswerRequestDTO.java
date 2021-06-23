@@ -9,7 +9,7 @@ import java.lang.reflect.Type;
 
 public class AnswerRequestDTO {
     public String sessionKey = null;
-    public boolean isRight;
+    public boolean answerRight;
 
     public static AnswerRequestDTO deserialize(String data) {
         return GlobalGson.INSTANCE.fromJson(new JsonReader(new StringReader(data)), AnswerRequestDTO.class);
@@ -23,7 +23,7 @@ public class AnswerRequestDTO {
             AnswerRequestDTO obj = new AnswerRequestDTO();
             JsonObject jsonObject = json.getAsJsonObject();
             obj.sessionKey = jsonObject.get("sessionKey").getAsString();
-            obj.isRight = jsonObject.get("isRight").getAsBoolean();
+            obj.answerRight = jsonObject.get("isRight").getAsBoolean();
             return obj;
         }
     }

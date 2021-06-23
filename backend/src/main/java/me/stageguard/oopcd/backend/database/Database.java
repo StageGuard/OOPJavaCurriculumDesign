@@ -38,7 +38,9 @@ public class Database implements Runnable {
         config.setJdbcUrl("jdbc:mysql://" + builder.ip + "/" + builder.database);
         config.setDriverClassName("com.mysql.cj.jdbc.Driver");
         config.setUsername(builder.username);
-        if (builder.password != null) config.setPassword(builder.password);
+        if (builder.password != null) {
+            config.setPassword(builder.password);
+        }
         config.setMaximumPoolSize(builder.maxPoolSize == null ? 10 : builder.maxPoolSize);
         return new HikariDataSource(config);
     }
@@ -128,9 +130,13 @@ public class Database implements Runnable {
         }
 
         public Database build() {
-            if(INSTANCE == null) {
-                if(database == null) throw new IllegalArgumentException("Property database cannot be null.");
-                if(username == null) throw new IllegalArgumentException("Property username cannot be null.");
+            if (INSTANCE == null) {
+                if (database == null) {
+                    throw new IllegalArgumentException("Property database cannot be null.");
+                }
+                if (username == null) {
+                    throw new IllegalArgumentException("Property username cannot be null.");
+                }
                 var newInstance = new Database(this);
                 INSTANCE = newInstance;
                 return newInstance;

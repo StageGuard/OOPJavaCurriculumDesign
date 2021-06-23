@@ -12,19 +12,26 @@ package me.stageguard.oopcd.backend;
 import me.stageguard.oopcd.backend.database.Database.DatabaseBuilder;
 import me.stageguard.oopcd.backend.netty.NettyHttpServer.NettyHttpServerBuilder;
 import me.stageguard.oopcd.backend.netty.route.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
+/**
+ * @author StageGuard
+ */
 public class ApplicationMain {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ApplicationMain.class);
-
-    private static final ExecutorService executors = Executors.newCachedThreadPool();
+    private static final ExecutorService EXECUTORS = new ThreadPoolExecutor(5, 200,
+            0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<>(1024), r -> {
+        var thread = new Thread(r);
+        thread.setName("main-thread-" + LocalDate.now());
+        return thread;
+    }, new ThreadPoolExecutor.AbortPolicy());
 
     public static void main(String[] args) {
         var nettyHttpService = NettyHttpServerBuilder.create(8088)
@@ -39,12 +46,13 @@ public class ApplicationMain {
                 )))
                 .authKey("114514_1919810")
                 .build();
-        executors.execute(nettyHttpService);
+        EXECUTORS.execute(nettyHttpService);
         var databaseService = DatabaseBuilder.create("localhost", 3306)
                 .username("root")
                 .password("testpwd")
                 .database("oopcd_database")
                 .build();
-        executors.execute(databaseService);
+        EXECUTORS.execute(databaseService);
+        EXECUTORS.shutdown();
     }
 }

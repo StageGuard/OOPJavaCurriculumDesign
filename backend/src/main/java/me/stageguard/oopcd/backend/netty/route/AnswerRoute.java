@@ -22,7 +22,7 @@ public class AnswerRoute implements IRouteHandler {
         var session = SessionManager.INSTANCE.getSession(answerInfo.sessionKey);
         if (session != null) {
             try {
-                if (answerInfo.isRight) {
+                if (answerInfo.answerRight) {
                     session.answerRight();
                     SessionManager.INSTANCE.deleteSession(answerInfo.sessionKey);
                 } else {

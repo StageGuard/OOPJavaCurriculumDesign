@@ -89,7 +89,11 @@ public class HttpRequestHandler extends SimpleChannelInboundHandler<FullHttpRequ
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
         LOGGER.info("exceptionCaught in HttpRequestHandler");
-        if(null != cause) cause.printStackTrace();
-        if(null != ctx) ctx.close();
+        if (null != cause) {
+            cause.printStackTrace();
+        }
+        if (null != ctx) {
+            ctx.close();
+        }
     }
 }

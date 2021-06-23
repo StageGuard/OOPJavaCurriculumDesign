@@ -10,9 +10,7 @@
 package me.stageguard.oopcd.backend.database;
 
 import me.stageguard.oopcd.backend.ConsumerOrException;
-import me.stageguard.oopcd.backend.database.AbstractDataAccessObject.IDataAccessObjectData;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import me.stageguard.oopcd.backend.database.AbstractDataAccessObject.AbstractDataAccessObjectData;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -20,13 +18,11 @@ import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @SuppressWarnings({"unused", "DuplicatedCode"})
-public abstract class AbstractDataAccessObject<T extends IDataAccessObjectData> {
+public abstract class AbstractDataAccessObject<T extends AbstractDataAccessObjectData> {
     private final String tableName;
-    private final Logger LOGGER;
 
     protected AbstractDataAccessObject(String tableName) {
         this.tableName = tableName;
-        LOGGER = LoggerFactory.getLogger(typeOfT());
     }
 
     public int create() throws SQLException {
@@ -36,36 +32,42 @@ public abstract class AbstractDataAccessObject<T extends IDataAccessObjectData> 
                 .append("`").append(tableName).append("`").append(" ")
                 .append("(");
         String primaryKey = null;
-        for(var i = 0; i < dataFields.length; i ++) {
+        for (var i = 0; i < dataFields.length; i++) {
             var property = dataFields[i].getAnnotation(FieldProperty.class);
-            if(property != null) {
+            if (property != null) {
                 statement.append("`").append(property.name()).append("`").append(" ");
                 statement.append(property.type()).append(" ");
-                if(property.zerofill()) statement.append("ZEROFILL").append(" ");
-                if(property.unsigned()) statement.append("UNSIGNED").append(" ");
+                if (property.zerofill()) {
+                    statement.append("ZEROFILL").append(" ");
+                }
+                if (property.unsigned()) {
+                    statement.append("UNSIGNED").append(" ");
+                }
                 statement.append(property.nullable() ? "NULL" : "NOT NULL").append(" ");
-                if(!property.defaultV().equals("")) {
-                    if(property.defaultV().equalsIgnoreCase("null") && !property.nullable()) {
+                if (!"".equals(property.defaultV())) {
+                    if ("null".equalsIgnoreCase(property.defaultV()) && !property.nullable()) {
                         throw new IllegalArgumentException("Field " + dataFields[i].getName() + " shouldn't be null but the default value is null");
                     }
                     statement.append("DEFAULT ").append(property.defaultV()).append(" ");
                 }
-                if(property.order() != FieldProperty.FieldOrder.DEFAULT) {
-                    if(property.after().equals("")) {
+                if (property.order() != FieldProperty.FieldOrder.DEFAULT) {
+                    if ("".equals(property.after())) {
                         throw new IllegalArgumentException("Order of " + tableName + " is null since order() is not FieldOrder.DEFAULT");
                     }
                     statement.append(property.order() == FieldProperty.FieldOrder.FIRST ? "FIRST" : ("AFTER " + property.after()));
                 }
-                if(i != dataFields.length - 1) statement.append(", ");
-                if(property.prime()) {
-                    if(primaryKey != null) {
+                if (i != dataFields.length - 1) {
+                    statement.append(", ");
+                }
+                if (property.prime()) {
+                    if (primaryKey != null) {
                         throw new IllegalArgumentException("Primary of " + tableName + "key has already exists.");
                     }
                     primaryKey = property.name();
                 }
             }
         }
-        if(primaryKey != null) {
+        if (primaryKey != null) {
             statement.append(", PRIMARY KEY(`").append(primaryKey).append("`)");
         }
         statement.append(") COLLATE=`utf8_general_ci`;");
@@ -81,7 +83,7 @@ public abstract class AbstractDataAccessObject<T extends IDataAccessObjectData> 
     }
 
     public int insert(List<T> itemList) throws SQLException {
-        if(itemList.isEmpty()) {
+        if (itemList.isEmpty()) {
             throw new SQLException("Nothing to insert because list is empty.");
         }
         var statement = new StringBuilder();
@@ -91,7 +93,9 @@ public abstract class AbstractDataAccessObject<T extends IDataAccessObjectData> 
         AtomicInteger index = new AtomicInteger();
         ks.forEach((k) -> {
             statement.append("`").append(k).append("`");
-            if(index.get() != ks.size() - 1) statement.append(", ");
+            if (index.get() != ks.size() - 1) {
+                statement.append(", ");
+            }
             index.getAndIncrement();
         });
         index.set(0);
@@ -101,16 +105,20 @@ public abstract class AbstractDataAccessObject<T extends IDataAccessObjectData> 
             var vs = item.deserialize().values();
             statement.append("(");
             vs.forEach((obj) -> {
-                if(obj instanceof String) {
+                if (obj instanceof String) {
                     statement.append("'").append(obj).append("'");
                 } else {
                     statement.append(obj);
                 }
-                if(innerIndex.get() != vs.size() - 1) statement.append(", ");
+                if (innerIndex.get() != vs.size() - 1) {
+                    statement.append(", ");
+                }
                 innerIndex.incrementAndGet();
             });
             statement.append(")");
-            if(index.get() != itemList.size() - 1) statement.append(", ");
+            if (index.get() != itemList.size() - 1) {
+                statement.append(", ");
+            }
             index.incrementAndGet();
             innerIndex.set(0);
         }
@@ -125,7 +133,7 @@ public abstract class AbstractDataAccessObject<T extends IDataAccessObjectData> 
 
     public int update(T data) throws SQLException {
         var initial = data.getInitialValue();
-        if(initial == null) {
+        if (initial == null) {
             throw new SQLException("Cannot update this item because initialValue is null, maybe instance is not created internally.");
         }
         var kvMapping = data.deserialize();
@@ -136,7 +144,9 @@ public abstract class AbstractDataAccessObject<T extends IDataAccessObjectData> 
         kvMapping.forEach((k, v) -> {
             statement.append("`").append(k).append("`=");
             statement.append("'").append(v).append("'");
-            if(index.get() != kvMapping.size() - 1) statement.append(",");
+            if (index.get() != kvMapping.size() - 1) {
+                statement.append(",");
+            }
             statement.append(" ");
             index.getAndIncrement();
         });
@@ -149,13 +159,16 @@ public abstract class AbstractDataAccessObject<T extends IDataAccessObjectData> 
                 type = typeOfT()
                         .getField(Objects.requireNonNull(getFieldViaPropertyName(k)))
                         .getAnnotation(FieldProperty.class).type().toLowerCase();
-            } catch (NoSuchFieldException ignored) { }
-            if(isFieldANumber(type)) {
+            } catch (NoSuchFieldException ignored) {
+            }
+            if (isFieldANumber(type)) {
                 statement.append(v).append(" ");
             } else {
                 statement.append("'").append(v).append("' ");
             }
-            if(index.get() != initial.size() - 1) statement.append("AND");
+            if (index.get() != initial.size() - 1) {
+                statement.append("AND");
+            }
             statement.append(" ");
             index.getAndIncrement();
         });
@@ -188,7 +201,9 @@ public abstract class AbstractDataAccessObject<T extends IDataAccessObjectData> 
         var list = new ArrayList<T>();
         try {
             query(statement.toString(), result -> {
-                if (result.isEmpty()) return;
+                if (result.isEmpty()) {
+                    return;
+                }
                 var resultSet = result.get();
                 while (resultSet.next()) {
                     list.add(serialize(resultSet));
@@ -225,7 +240,7 @@ public abstract class AbstractDataAccessObject<T extends IDataAccessObjectData> 
 
     private String getFieldViaPropertyName(String name) {
         for (var f : typeOfT().getFields()) {
-            if(f.getAnnotation(FieldProperty.class).name().equals(name)) {
+            if (f.getAnnotation(FieldProperty.class).name().equals(name)) {
                 return f.getName();
             }
         }
@@ -254,11 +269,13 @@ public abstract class AbstractDataAccessObject<T extends IDataAccessObjectData> 
 
     protected abstract T serialize(ResultSet resultSet) throws SQLException;
 
-    protected abstract static class IDataAccessObjectData {
+    protected abstract static class AbstractDataAccessObjectData {
         private Map<String, Object> initialValue = null;
 
-        protected IDataAccessObjectData(Map<String, Object> initial) {
-            if (initial != null) initialValue = initial;
+        protected AbstractDataAccessObjectData(Map<String, Object> initial) {
+            if (initial != null) {
+                initialValue = initial;
+            }
         }
 
         public Map<String, Object> getInitialValue() {

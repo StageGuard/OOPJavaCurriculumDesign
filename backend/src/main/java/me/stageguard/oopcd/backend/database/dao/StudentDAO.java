@@ -40,7 +40,7 @@ public class StudentDAO extends AbstractDataAccessObject<StudentDAO.StudentData>
         );
     }
 
-    public static class StudentData extends IDataAccessObjectData {
+    public static class StudentData extends AbstractDataAccessObjectData {
         @FieldProperty(name = "name", type = "varchar(10)")
         public String name;
         @FieldProperty(name = "id", type = "bigint", prime = true)
@@ -88,8 +88,12 @@ public class StudentDAO extends AbstractDataAccessObject<StudentDAO.StudentData>
 
         @Override
         public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
+            if (this == o) {
+                return true;
+            }
+            if (o == null || getClass() != o.getClass()) {
+                return false;
+            }
             StudentData that = (StudentData) o;
             return id == that.id && totalAnswered == that.totalAnswered && rightAnswered == that.rightAnswered && name.equals(that.name) && clazz.equals(that.clazz);
         }

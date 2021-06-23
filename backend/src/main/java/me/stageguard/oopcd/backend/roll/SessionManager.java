@@ -8,7 +8,7 @@ import java.util.Random;
 public class SessionManager {
     public static final SessionManager INSTANCE = new SessionManager();
     @SuppressWarnings("SpellCheckingInspection")
-    private static final char[] mapping = "AB1CD2EF3GH4IJ5KL6MN7OP8QR9ST0UVWXYZ".toCharArray();
+    private static final char[] MAPPING = "AB1CD2EF3GH4IJ5KL6MN7OP8QR9ST0UVWXYZ".toCharArray();
 
     private final Random random;
     private final HashMap<String, RollSession> sessions;
@@ -47,7 +47,7 @@ public class SessionManager {
     public String generateSessionKey(int bit) {
         var key = new StringBuilder();
         for (var i = 0; i < bit; i++) {
-            key.append(mapping[random.nextInt(mapping.length - 1)]);
+            key.append(MAPPING[random.nextInt(MAPPING.length - 1)]);
         }
         return key.toString();
     }

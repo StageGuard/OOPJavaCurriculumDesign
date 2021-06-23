@@ -19,7 +19,7 @@ public class ConditionFilter {
     }
 
     public ConditionFilter head(Condition condition) {
-        if(isHeadCalled) {
+        if (isHeadCalled) {
             throw new UnsupportedOperationException("Method head has already called once.");
         }
         isHeadCalled = true;
@@ -28,7 +28,7 @@ public class ConditionFilter {
     }
 
     public ConditionFilter and(Condition condition) {
-        if(!isHeadCalled) {
+        if (!isHeadCalled) {
             throw new UnsupportedOperationException("Method head hasn't called before calling and.");
         }
         statement.append(" AND ");
@@ -37,7 +37,7 @@ public class ConditionFilter {
     }
 
     public ConditionFilter or(Condition condition) {
-        if(!isHeadCalled) {
+        if (!isHeadCalled) {
             throw new UnsupportedOperationException("Method head hasn't called before calling or.");
         }
         statement.append(" or ");
@@ -61,7 +61,7 @@ public class ConditionFilter {
             var sb = new StringBuilder();
             sb.append("`").append(left).append("`");
             sb.append(op);
-            if(right instanceof String) {
+            if (right instanceof String) {
                 sb.append("'").append(right).append("'");
             } else {
                 sb.append(right);
