@@ -52,14 +52,17 @@ object RollManager {
 }
 ```
 
-3. Run Gradle Task `backend -> shadow -> shadowJar` and `frontend-desktop -> shadow -> shadowJar`.<br>The shadowed jar
-   file can be found in `backend/build/libs/backend-x.x-all.jar` and `frontend-desktop/build/libs/frontend-x.x-all.jar`.
+3. Run Gradle task `backend:shadowJar` and `frontend-desktop:packageUberJarForCurrentOS`(
+   or `frontend-desktop:createDistributable`).<br>The shadowed jar file can be found
+   in `backend/build/libs/backend-x.x-all.jar`
+   and `frontend-desktop/build/compose/jars/OOPCDFrontendDesktop-platform-arch-x.x.x.jar`(
+   or `frontend-desktop/build/compose/binaries/main/app/OOPCDFrontendDesktop` if you runs `createDistributable`).
 
-4. Execute these jars.
+4. Execute these jars (or just run exe if you runs `createDistributable`).
 
 ```bash
 java -jar backend-x.x-all.jar # run backend service
-java -jar frontend-desktop-x.x-all.jar # run frontend application
+java -jar OOPCDFrontendDesktop-platform-arch-x.x.x.jar # run frontend application
 ```
 
 > If you don't want to change these default config and build jars manually, you can simplify download the jars in [releases page](https://github.com/StageGuard/OOPJavaCurriculumDesign/releases).
