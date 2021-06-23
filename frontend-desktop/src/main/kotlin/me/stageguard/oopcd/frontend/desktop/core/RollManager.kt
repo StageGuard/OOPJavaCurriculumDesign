@@ -20,8 +20,14 @@ import java.util.regex.Pattern
 @Suppress("DuplicatedCode")
 object RollManager {
     private val client = HttpClient(OkHttp)
-    private const val AUTH_KEY = "114514_1919810"
-    private const val BASE_URL = "http://localhost:8088"
+    private val AUTH_KEY = System.getProperty("sg.oopcd.frontend.desktop.authKey") ?: "114514_1919810"
+
+    @Suppress("HttpUrlsUsage")
+    private val BASE_URL = "http://${
+        System.getProperty("sg.oopcd.frontend.desktop.server.address") ?: "localhost"
+    }:${
+        System.getProperty("sg.oopcd.frontend.desktop.server.port") ?: 8081
+    }"
 
     private val json = Json { ignoreUnknownKeys = true }
 
